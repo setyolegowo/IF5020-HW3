@@ -54,8 +54,8 @@ public class RuleTokenization {
         if (needle.length() > position && needle.charAt(position) == ' ') {
             position++;
         }
-        if (retval.length() == 0 && needle.length() > position) {
-            if (needle.length() > position) {
+        if (retval.length() == 0) {
+            if (needle.length() <= position) {
                 throw new ParseException("Token should not empty.", position);
             }
             return null;

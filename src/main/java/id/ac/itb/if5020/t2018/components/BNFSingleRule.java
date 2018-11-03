@@ -28,4 +28,6 @@ public class BNFSingleRule {
 
         return _tokenRule;
     }
+
+    // public char[] first() {}
 }

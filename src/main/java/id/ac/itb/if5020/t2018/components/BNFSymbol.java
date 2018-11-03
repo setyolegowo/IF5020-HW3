@@ -5,6 +5,8 @@
  */
 package id.ac.itb.if5020.t2018.components;
 
+import java.text.ParseException;
+
 import id.ac.itb.if5020.t2018.components.symbols.NonTerminalSymbol;
 import id.ac.itb.if5020.t2018.components.symbols.OptionalSymbol;
 import id.ac.itb.if5020.t2018.components.symbols.RepetitionSymbol;
@@ -18,11 +20,11 @@ public abstract class BNFSymbol {
 
     public final String symbol;
 
-    public BNFSymbol(String _symbol) {
+    protected BNFSymbol(String _symbol) {
         symbol = _symbol;
     }
 
-    public static BNFSymbol create(String symbol) {
+    public static BNFSymbol create(String symbol) throws ParseException {
         switch (symbol.charAt(0)) {
             case '<':
                 return new NonTerminalSymbol(symbol);
