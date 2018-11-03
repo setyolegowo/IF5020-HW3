@@ -12,5 +12,7 @@ import id.ac.itb.if5020.t2018.components.BNFSymbol;
  * @author setyo
  */
 public class TerminalSymbol extends BNFSymbol {
-    
+    public TerminalSymbol(String _symbol) {
+        super(_symbol);
+    }
 }
