@@ -5,6 +5,7 @@
  */
 package id.ac.itb.if5020.t2018.components.symbols;
 
+import java.security.InvalidParameterException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +23,13 @@ public class RepetitionSymbol extends BNFSymbol {
 
     public RepetitionSymbol(String _symbol) throws ParseException {
         super(_symbol);
+        if (_symbol.charAt(0) != '{' || _symbol.charAt(_symbol.length() - 1) != '}') {
+            throw new InvalidParameterException("Symbol must start with '{' and end with '}'");
+        }
         rules = tokenize(_symbol.substring(1, _symbol.length() - 1));
+        if (rules.isEmpty()) {
+            throw new InvalidParameterException("Rules inside must be not empty");
+        }
     }
 
     private static List<BNFSymbol> tokenize(String _rule) throws ParseException {
