@@ -51,7 +51,7 @@ public class RuleTokenization {
         if (!stack.empty()) {
             throw new ParseException("Rule '" + needle + "' cannot be parsed.", startPosition);
         }
-        if (needle.charAt(position) == ' ') {
+        if (needle.length() > position && needle.charAt(position) == ' ') {
             position++;
         }
         if (retval.length() == 0 && needle.length() > position) {
