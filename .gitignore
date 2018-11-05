@@ -26,6 +26,7 @@ hs_err_pid*
 target/
 build/
 bin/
+dependency-reduced-pom.xml
 
 # VSCode
 .project
