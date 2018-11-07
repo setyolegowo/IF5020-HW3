@@ -24,6 +24,8 @@ public abstract class BNFSymbol {
         symbol = _symbol;
     }
 
+    abstract public void match();
+
     public static BNFSymbol create(String symbol) throws ParseException {
         switch (symbol.charAt(0)) {
             case '<':

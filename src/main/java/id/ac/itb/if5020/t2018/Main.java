@@ -1,9 +1,13 @@
 package id.ac.itb.if5020.t2018;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.lang.Exception;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
+
+import id.ac.itb.if5020.t2018.helpers.TextFileParser;
 
 final public class Main {
 
@@ -22,11 +26,12 @@ final public class Main {
         main.run();
     }
 
-    public void prepare() {
-        // TODO
+    public void prepare() throws FileNotFoundException, IOException {
+        JavaEngine.parser = new TextFileParser(filename);
+        JavaEngine.parser.reset();
     }
 
     public void run() {
-        // TODO
+        JavaEngine.runProgram();
     }
 }

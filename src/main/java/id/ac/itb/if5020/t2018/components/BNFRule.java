@@ -11,9 +11,7 @@ import java.text.ParseException;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class BNFRule {
 
@@ -23,11 +21,26 @@ public class BNFRule {
 
     public final List<BNFSingleRule> rules;
 
+    public final SpecialRule specialSymbol;
+
     private BNFRule(String _left, String[] rights) throws ParseException {
         left = _left;
         rules = parseRight(rights);
         if (rules.isEmpty()) {
             throw new InvalidParameterException("BNF Rules cannot be empty");
+        }
+        specialSymbol = null;
+    }
+
+    private BNFRule(String _left, SpecialRule right) {
+        left = _left;
+        rules = null;
+        specialSymbol = right;
+    }
+
+    public void parse() {
+        for (BNFSingleRule rule : rules) {
+            rule.parse();
         }
     }
 
@@ -41,31 +54,19 @@ public class BNFRule {
         return _rules;
     }
 
-    /**
-     * Caching first list.
-     */
-    private Set<String> firstList;
-
-    public Set<String> getFirst() {
-        if (firstList == null) {
-            firstList = new HashSet<>();
-            for (BNFSingleRule rule : rules) {
-                if (rule.first() != null) {
-                    for (String first : rule.first()) {
-                        firstList.add(first);
-                    }
-                }
-            }
-        }
-
-        return firstList;
-    }
-
     public static void add(String left, String[] rights) throws ParseException {
         allrules.put(left, new BNFRule(left, rights));
     }
 
+    public static void add(String left, SpecialRule right) {
+        allrules.put(left, new BNFRule(left, right));
+    }
+
     public static BNFRule get(String left) {
         return allrules.get(left);
+    }
+
+    public static void clear() {
+        allrules.clear();
     }
 }

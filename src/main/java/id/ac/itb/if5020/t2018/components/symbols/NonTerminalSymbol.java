@@ -5,6 +5,7 @@
  */
 package id.ac.itb.if5020.t2018.components.symbols;
 
+import id.ac.itb.if5020.t2018.JavaEngine;
 import id.ac.itb.if5020.t2018.components.BNFSymbol;
 
 /**
@@ -14,5 +15,10 @@ import id.ac.itb.if5020.t2018.components.BNFSymbol;
 public class NonTerminalSymbol extends BNFSymbol {
     public NonTerminalSymbol(String _symbol) {
         super(_symbol);
+    }
+
+    @Override
+    public void match() {
+        JavaEngine.parser.getCurrentToken();
     }
 }

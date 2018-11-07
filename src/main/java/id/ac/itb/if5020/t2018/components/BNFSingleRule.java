@@ -53,4 +53,10 @@ public class BNFSingleRule {
         }
         return firstlist;
     }
+
+    public void parse() {
+        for (BNFSymbol symbol : tokenRule) {
+            symbol.match();
+        }
+    }
 }

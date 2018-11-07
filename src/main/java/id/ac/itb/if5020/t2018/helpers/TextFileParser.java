@@ -6,7 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
-public class TextFileParser {
+public class TextFileParser implements TextFileParserInterface {
 
     private FileReader filereader;
 
@@ -30,7 +30,28 @@ public class TextFileParser {
         bufferReader = br;
     }
 
+    @Override
+    public void reset() throws IOException {
+        bufferReader.reset();
+    }
+
+    private String currentToken;
+
+    @Override
+    public String getCurrentToken() {
+        return currentToken;
+    }
+
+    private String currentLine;
+
+    @Override
     public String readNextToken() {
+        if (currentLine == null) {
+            try {
+                currentLine = bufferReader.readLine();
+            } catch (IOException e) {
+            }
+        }
         // TODO
         return null;
     }

@@ -8,6 +8,9 @@ package id.ac.itb.if5020.t2018;
 import java.text.ParseException;
 
 import id.ac.itb.if5020.t2018.components.BNFRule;
+import id.ac.itb.if5020.t2018.components.specialrules.JavaLetter;
+import id.ac.itb.if5020.t2018.components.specialrules.JavaLetterOrDigit;
+import id.ac.itb.if5020.t2018.helpers.TextFileParserInterface;
 
 /**
  *
@@ -15,11 +18,23 @@ import id.ac.itb.if5020.t2018.components.BNFRule;
  */
 public class JavaEngine {
 
+    public static TextFileParserInterface parser;
+
     public static void prepareRules() throws ParseException {
-        BNFRule.add("program", rightCreator("[<PackageDeclaration>] [<ImportDeclaration>] [<TypeDeclaration>]"));
+        BNFRule.add("program", rightCreator("[<PackageDeclaration>]"));
+        BNFRule.add("PackageDeclaration", rightCreator("package <QualifiedIdentifier> ;"));
+        BNFRule.add("QualifiedIdentifier", rightCreator("<Identifier> . <Identifier>"));
+        BNFRule.add("Identifier", rightCreator("<JavaLetter> {<JavaLetterOrDigit>}"));
+        BNFRule.add("JavaLetter", new JavaLetter());
+        BNFRule.add("JavaLetterOrDigit", new JavaLetterOrDigit());
     }
 
-    private static String[] rightCreator(String... right) {
+    public static String[] rightCreator(String... right) {
         return right;
+    }
+
+    public static void runProgram() {
+        BNFRule rule = BNFRule.get("program");
+        rule.parse();
     }
 }

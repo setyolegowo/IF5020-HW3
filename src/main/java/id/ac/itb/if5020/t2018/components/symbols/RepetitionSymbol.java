@@ -10,6 +10,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
+import id.ac.itb.if5020.t2018.JavaEngine;
 import id.ac.itb.if5020.t2018.components.BNFSymbol;
 import id.ac.itb.if5020.t2018.helpers.RuleTokenization;
 
@@ -43,5 +44,10 @@ public class RepetitionSymbol extends BNFSymbol {
         }
 
         return _tokenRule;
+    }
+
+    @Override
+    public void match() {
+        JavaEngine.parser.getCurrentToken();
     }
 }
