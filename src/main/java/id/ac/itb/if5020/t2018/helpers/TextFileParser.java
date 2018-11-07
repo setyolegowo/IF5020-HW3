@@ -12,22 +12,27 @@ public class TextFileParser implements TextFileParserInterface {
 
     private final BufferedReader bufferReader;
 
-    public TextFileParser(String _filename) throws FileNotFoundException {
+    private int lineNumber = 0;
+
+    public TextFileParser(String _filename) throws FileNotFoundException, IOException {
         filereader = new FileReader(_filename);
         bufferReader = new BufferedReader(filereader);
+        bufferReader.mark(0);
     }
 
-    public TextFileParser(File file) throws FileNotFoundException {
+    public TextFileParser(File file) throws FileNotFoundException, IOException {
         filereader = new FileReader(file);
         bufferReader = new BufferedReader(filereader);
+        bufferReader.mark(0);
     }
 
-    public TextFileParser(FileReader reader) {
-        bufferReader = new BufferedReader(reader);
+    public TextFileParser(FileReader reader) throws IOException {
+        this(new BufferedReader(reader));
     }
 
-    public TextFileParser(BufferedReader br) {
+    public TextFileParser(BufferedReader br) throws IOException {
         bufferReader = br;
+        bufferReader.mark(0);
     }
 
     @Override
@@ -49,10 +54,13 @@ public class TextFileParser implements TextFileParserInterface {
         if (currentLine == null) {
             try {
                 currentLine = bufferReader.readLine();
+                lineNumber++;
             } catch (IOException e) {
+                System.err.println(e.getMessage());
             }
         }
         // TODO
+
         return null;
     }
 

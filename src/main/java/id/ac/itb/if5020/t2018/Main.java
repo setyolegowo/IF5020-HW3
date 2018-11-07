@@ -6,6 +6,7 @@ import java.lang.Exception;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
+import com.beust.jcommander.ParameterException;
 
 import id.ac.itb.if5020.t2018.helpers.TextFileParser;
 
@@ -21,9 +22,13 @@ final public class Main {
     public static void main(String[] args) throws Exception {
         JavaEngine.prepareRules();
         Main main = new Main();
-        JCommander.newBuilder().addObject(main).build().parse(args);
-        main.prepare();
-        main.run();
+        try {
+            JCommander.newBuilder().addObject(main).build().parse(args);
+            main.prepare();
+            main.run();
+        } catch (ParameterException e) {
+            System.err.println(e.getMessage());
+        }
     }
 
     public void prepare() throws FileNotFoundException, IOException {
