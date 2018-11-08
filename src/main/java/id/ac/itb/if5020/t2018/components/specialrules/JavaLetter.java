@@ -17,7 +17,7 @@ public class JavaLetter extends NonTerminalSymbol implements SpecialRule {
         if (curchar.matches("^[a-zA-Z]$")) {
             JavaEngine.parser.readCurrentTokenChar();
         } else {
-            throw new RuleNotMatchException();
+            throw new RuleNotMatchException("Character is not Java letter");
         }
     }
 }

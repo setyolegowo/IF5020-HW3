@@ -24,7 +24,7 @@ public class TerminalSymbol extends BNFSymbol {
         if (symbol.equals(token)) {
             JavaEngine.parser.readNextToken();
         } else {
-            throw new RuleNotMatchException();
+            throw new RuleNotMatchException("Terminal '" + symbol + "' expected");
         }
     }
 }

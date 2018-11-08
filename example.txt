@@ -1,1 +1,1 @@
-package id.ac.itb.if5020.t2018;
+package 1id.ac.itb.if5020.t2018;
