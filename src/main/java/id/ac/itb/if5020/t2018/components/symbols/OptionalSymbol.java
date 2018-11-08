@@ -10,8 +10,8 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
-import id.ac.itb.if5020.t2018.JavaEngine;
 import id.ac.itb.if5020.t2018.components.BNFSymbol;
+import id.ac.itb.if5020.t2018.components.RuleNotMatchException;
 import id.ac.itb.if5020.t2018.helpers.RuleTokenization;
 
 /**
@@ -48,8 +48,11 @@ public class OptionalSymbol extends BNFSymbol {
 
     @Override
     public void match() {
-        for (BNFSymbol symbol : rules) {
-            symbol.match();
+        try {
+            for (BNFSymbol symbol : rules) {
+                symbol.match();
+            }
+        } catch (RuleNotMatchException e) {
         }
     }
 }

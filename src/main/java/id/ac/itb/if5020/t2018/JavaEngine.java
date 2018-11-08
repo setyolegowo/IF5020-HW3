@@ -23,7 +23,7 @@ public class JavaEngine {
     public static void prepareRules() throws ParseException {
         BNFRule.add("program", rightCreator("[<PackageDeclaration>]"));
         BNFRule.add("PackageDeclaration", rightCreator("package <QualifiedIdentifier> ;"));
-        BNFRule.add("QualifiedIdentifier", rightCreator("<Identifier> . <Identifier>"));
+        BNFRule.add("QualifiedIdentifier", rightCreator("<Identifier> {. <Identifier>}"));
         BNFRule.add("Identifier", rightCreator("<JavaLetter> {<JavaLetterOrDigit>}"));
         BNFRule.add("JavaLetter", new JavaLetter());
         BNFRule.add("JavaLetterOrDigit", new JavaLetterOrDigit());

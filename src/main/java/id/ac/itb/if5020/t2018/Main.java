@@ -26,6 +26,7 @@ final public class Main {
             JCommander.newBuilder().addObject(main).build().parse(args);
             main.prepare();
             main.run();
+            System.out.println("File is parsed perfectly.");
         } catch (ParameterException e) {
             System.err.println(e.getMessage());
         }

@@ -16,6 +16,8 @@ public class TextFileParser implements TextFileParserInterface {
 
     private int currentCol = 0;
 
+    private boolean _isEndOfFile = false;
+
     public TextFileParser(String _filename) throws FileNotFoundException, IOException {
         filereader = new FileReader(_filename);
         bufferReader = new BufferedReader(filereader);
@@ -66,6 +68,12 @@ public class TextFileParser implements TextFileParserInterface {
                 currentLine = bufferReader.readLine();
                 lineNumber++;
                 currentCol = 0;
+                currentToken = null;
+
+                if (currentLine == null) {
+                    _isEndOfFile = true;
+                    return null;
+                }
             } catch (IOException e) {
                 System.err.println(e.getMessage());
             }
@@ -79,7 +87,7 @@ public class TextFileParser implements TextFileParserInterface {
 
     private void updateCurrentToken() {
         shiftedSymbol = 0;
-        currentToken = null;
+        currentTokenIndex = 0;
         currentToken = "";
 
         for (;currentCol + shiftedSymbol < currentLine.length();) {
@@ -117,6 +125,11 @@ public class TextFileParser implements TextFileParserInterface {
         // - Start reading multiline or tagged comment
         // - Start reading single line comment
         // - Start reading terminal with symbol count more than 1
+        if (String.valueOf(currentLine.charAt(currentCol)).matches("[^<=>|]")) {
+            currentToken = String.valueOf(currentLine.charAt(currentCol));
+            currentCol++;
+            return true;
+        }
         //
         return false;
     }
@@ -126,5 +139,26 @@ public class TextFileParser implements TextFileParserInterface {
         if (filereader != null) {
             filereader.close();
         }
+    }
+
+    private int currentTokenIndex = 0;
+
+    @Override
+    public char getCurrentTokenChar() {
+        return currentToken.charAt(currentTokenIndex);
+    }
+
+    @Override
+    public char readCurrentTokenChar() {
+        char retval = currentToken.charAt(currentTokenIndex++);
+        if (currentToken.length() == currentTokenIndex) {
+            readNextToken();
+        }
+        return retval;
+    }
+
+    @Override
+    public boolean isEndOfFile() {
+        return _isEndOfFile;
     }
 }

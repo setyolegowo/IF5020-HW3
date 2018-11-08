@@ -4,9 +4,7 @@ package id.ac.itb.if5020.t2018.components;
 import java.security.InvalidParameterException;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import id.ac.itb.if5020.t2018.helpers.RuleTokenization;
 
@@ -35,23 +33,6 @@ public class BNFSingleRule {
         }
 
         return _tokenRule;
-    }
-
-    /**
-     * Caching first list.
-     */
-    private Set<String> firstlist;
-
-    public Set<String> first() {
-        if (firstlist == null) {
-            firstlist = new HashSet<>();
-            // TODO Find list first from rules?
-        }
-
-        if (firstlist.isEmpty()) {
-            return null;
-        }
-        return firstlist;
     }
 
     public void parse() {

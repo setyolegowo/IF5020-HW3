@@ -39,8 +39,12 @@ public class BNFRule {
     }
 
     public void parse() {
-        for (BNFSingleRule rule : rules) {
-            rule.parse();
+        if (specialSymbol != null) {
+            specialSymbol.match();
+        } else {
+            for (BNFSingleRule rule : rules) {
+                rule.parse();
+            }
         }
     }
 

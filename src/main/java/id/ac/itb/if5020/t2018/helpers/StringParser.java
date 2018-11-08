@@ -27,4 +27,19 @@ public class StringParser implements TextFileParserInterface {
         return 0;
     }
 
+    @Override
+    public char getCurrentTokenChar() {
+        return 0;
+    }
+
+    @Override
+    public char readCurrentTokenChar() {
+        return 0;
+    }
+
+    @Override
+    public boolean isEndOfFile() {
+        return false;
+    }
+
 }
