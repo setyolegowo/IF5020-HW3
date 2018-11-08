@@ -14,6 +14,8 @@ public class TextFileParser implements TextFileParserInterface {
 
     private int lineNumber = 0;
 
+    private int currentCol = 0;
+
     public TextFileParser(String _filename) throws FileNotFoundException, IOException {
         filereader = new FileReader(_filename);
         bufferReader = new BufferedReader(filereader);
@@ -33,6 +35,14 @@ public class TextFileParser implements TextFileParserInterface {
     public TextFileParser(BufferedReader br) throws IOException {
         bufferReader = br;
         bufferReader.mark(0);
+    }
+
+    public int getCurrentLineNumber() {
+        return lineNumber;
+    }
+
+    public int getCurrentCol() {
+        return currentCol;
     }
 
     @Override
@@ -55,13 +65,60 @@ public class TextFileParser implements TextFileParserInterface {
             try {
                 currentLine = bufferReader.readLine();
                 lineNumber++;
+                currentCol = 0;
             } catch (IOException e) {
                 System.err.println(e.getMessage());
             }
         }
-        // TODO
 
-        return null;
+        updateCurrentToken();
+        return currentToken;
+    }
+
+    private int shiftedSymbol;
+
+    private void updateCurrentToken() {
+        shiftedSymbol = 0;
+        currentToken = null;
+        currentToken = "";
+
+        for (;currentCol + shiftedSymbol < currentLine.length();) {
+            if (shiftedSymbol == 0) {
+                if (currentLine.charAt(currentCol + shiftedSymbol) <= ' ') {
+                    currentCol++;
+                    continue;
+                }
+            }
+            while (currentLine.substring(currentCol, currentCol + shiftedSymbol + 1).matches("[a-zA-Z0-9]+")) {
+                shiftedSymbol++;
+            }
+            if (shiftedSymbol == 0) {
+                if (handleNonJavaLetterAndDigit()) {
+                    break;
+                }
+            } else {
+                currentToken = currentLine.substring(currentCol, currentCol + shiftedSymbol);
+                currentCol += shiftedSymbol;
+                break;
+            }
+        }
+
+        if (currentCol == currentLine.length()) {
+            currentLine = null;
+        }
+    }
+
+    /**
+     * @return true when there is token, false otherwise.
+     */
+    private boolean handleNonJavaLetterAndDigit() {
+        // Separate reading possibility
+        // - Start reading string value
+        // - Start reading multiline or tagged comment
+        // - Start reading single line comment
+        // - Start reading terminal with symbol count more than 1
+        //
+        return false;
     }
 
     public void close() throws IOException {

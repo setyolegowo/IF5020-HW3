@@ -5,7 +5,9 @@
  */
 package id.ac.itb.if5020.t2018.components.symbols;
 
-import id.ac.itb.if5020.t2018.JavaEngine;
+import java.security.InvalidParameterException;
+
+import id.ac.itb.if5020.t2018.components.BNFRule;
 import id.ac.itb.if5020.t2018.components.BNFSymbol;
 
 /**
@@ -13,12 +15,20 @@ import id.ac.itb.if5020.t2018.components.BNFSymbol;
  * @author setyo
  */
 public class NonTerminalSymbol extends BNFSymbol {
+
+    private final String ruleName;
+
     public NonTerminalSymbol(String _symbol) {
         super(_symbol);
+        if (_symbol.charAt(0) != '<' || _symbol.charAt(_symbol.length() - 1) != '>') {
+            throw new InvalidParameterException("Symbol must start with '<' and end with '>'");
+        }
+        ruleName = symbol.substring(1, _symbol.length() - 1);
     }
 
     @Override
     public void match() {
-        JavaEngine.parser.getCurrentToken();
+        BNFRule rule = BNFRule.get(ruleName);
+        rule.parse();
     }
 }

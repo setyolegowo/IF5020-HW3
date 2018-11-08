@@ -48,6 +48,8 @@ public class OptionalSymbol extends BNFSymbol {
 
     @Override
     public void match() {
-        JavaEngine.parser.getCurrentToken();
+        for (BNFSymbol symbol : rules) {
+            symbol.match();
+        }
     }
 }

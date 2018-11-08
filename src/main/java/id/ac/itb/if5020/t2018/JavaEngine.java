@@ -34,6 +34,7 @@ public class JavaEngine {
     }
 
     public static void runProgram() {
+        JavaEngine.parser.readNextToken();
         BNFRule rule = BNFRule.get("program");
         rule.parse();
     }

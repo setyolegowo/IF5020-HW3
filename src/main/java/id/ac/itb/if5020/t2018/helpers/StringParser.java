@@ -17,4 +17,14 @@ public class StringParser implements TextFileParserInterface {
         // Nothing todo
     }
 
+    @Override
+    public int getCurrentLineNumber() {
+        return 0;
+    }
+
+    @Override
+    public int getCurrentCol() {
+        return 0;
+    }
+
 }

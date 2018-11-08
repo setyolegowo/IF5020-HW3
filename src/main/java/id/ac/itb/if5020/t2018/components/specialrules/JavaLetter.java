@@ -6,6 +6,11 @@ import id.ac.itb.if5020.t2018.components.symbols.NonTerminalSymbol;
 public class JavaLetter extends NonTerminalSymbol implements SpecialRule {
 
     public JavaLetter() {
-        super("#JAVALETTER#");
+        super("<#JAVALETTER#>");
+    }
+
+    @Override
+    public void match() {
+
     }
 }
