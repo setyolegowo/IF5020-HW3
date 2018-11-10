@@ -24,9 +24,10 @@ public class JavaEngine {
     public static TextFileParserInterface parser;
 
     public static void prepareRules() throws ParseException {
-        BNFRule.add("program", rightCreator("[<PackageDeclaration>] {<ImportDeclaration>}"));
+        BNFRule.add("Program", rightCreator("[<PackageDeclaration>] {<ImportDeclaration>}"));
         BNFRule.add("PackageDeclaration", rightCreator("package <QualifiedIdentifier> ;"));
         BNFRule.add("ImportDeclaration", rightCreator("import [static] <QualifiedIdentifier> [. *] ;"));
+        BNFRule.add("TypeDeclaration", rightCreator(";", "<ClassDeclaration>", "<EnumDeclaration>", "<InterfaceDeclaration>", "<AnnotationDeclaration>"));
         BNFRule.add("QualifiedIdentifier", rightCreator("<Identifier> {. <Identifier>}"));
         BNFRule.add("Identifier", rightCreator("<JavaLetter> {<JavaLetterOrDigit>}"));
         BNFRule.add("JavaLetter", new JavaLetter());
@@ -39,7 +40,7 @@ public class JavaEngine {
 
     public static void runProgram() {
         JavaEngine.parser.readNextToken();
-        BNFRule rule = BNFRule.get("program");
+        BNFRule rule = BNFRule.get("Program");
         rule.parse();
     }
 }

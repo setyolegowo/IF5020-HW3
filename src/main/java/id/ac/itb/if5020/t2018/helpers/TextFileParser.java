@@ -6,6 +6,8 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
+import id.ac.itb.if5020.t2018.JavaEngine;
+
 public class TextFileParser implements TextFileParserInterface {
 
     private FileReader filereader;
@@ -194,6 +196,8 @@ public class TextFileParser implements TextFileParserInterface {
 
     @Override
     public void resetToMarker(Marker marker) {
+        JavaEngine.LOGGER.warning("This parser is not parsing with LL(1) rule.");
+
         if (marker.lineNumber != lineNumber) {
             throw new RuntimeException("Cannot reset no another line");
         }

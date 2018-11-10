@@ -51,7 +51,11 @@ public class BNFRule {
                     rules.get(i).parse();
                     break;
                 } catch (RuleNotMatchException e) {
-                    JavaEngine.parser.resetToMarker(marker);
+                    if (i + 1 < rules.size()) {
+                        JavaEngine.parser.resetToMarker(marker);
+                    } else {
+                        throw e;
+                    }
                 }
             }
         }
