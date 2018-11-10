@@ -8,6 +8,7 @@ import java.util.logging.Level;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 
+import id.ac.itb.if5020.t2018.helpers.Marker;
 import id.ac.itb.if5020.t2018.helpers.TextFileParser;
 
 final public class Main {
@@ -73,10 +74,11 @@ final public class Main {
     }
 
     private void printError() {
-        System.err.println("Parsing failed in line " + JavaEngine.parser.getCurrentLineNumber());
+        Marker mark = JavaEngine.parser.getLatestError();
+        System.err.println("Parsing failed in line " + mark.lineNumber);
         System.err.println();
         System.err.println(JavaEngine.parser.getCurrentLineString());
-        for (int i = 0; i < JavaEngine.parser.getCurrentCol(); i++) {
+        for (int i = 0; i < mark.colNumber; i++) {
             System.err.print(' ');
         }
         System.err.println('^');

@@ -46,4 +46,24 @@ public class StringParser implements TextFileParserInterface {
     public String getCurrentLineString() {
         return null;
     }
+
+    @Override
+    public Marker getMarker() {
+        return null;
+    }
+
+    @Override
+    public void resetToMarker(Marker marker) {
+
+    }
+
+    @Override
+    public void markError() {
+
+    }
+
+    @Override
+    public Marker getLatestError() {
+        return null;
+    }
 }

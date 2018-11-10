@@ -68,23 +68,29 @@ public class TextFileParser implements TextFileParserInterface {
 
     @Override
     public String readNextToken() {
-        if (currentLine == null) {
-            try {
-                currentLine = bufferReader.readLine();
-                lineNumber++;
-                currentCol = 0;
-                currentToken = null;
+        for (;;) {
+            if (currentLine == null) {
+                try {
+                    currentLine = bufferReader.readLine();
+                    lineNumber++;
+                    currentCol = 0;
+                    currentToken = null;
 
-                if (currentLine == null) {
-                    _isEndOfFile = true;
-                    return null;
+                    if (currentLine == null) {
+                        _isEndOfFile = true;
+                        return null;
+                    }
+                } catch (IOException e) {
+                    System.err.println(e.getMessage());
                 }
-            } catch (IOException e) {
-                System.err.println(e.getMessage());
+            }
+
+            updateCurrentToken();
+            if (currentToken != null && currentToken != "") {
+                break;
             }
         }
 
-        updateCurrentToken();
         return currentToken;
     }
 
@@ -130,9 +136,22 @@ public class TextFileParser implements TextFileParserInterface {
         // - Start reading multiline or tagged comment
         // - Start reading single line comment
         // - Start reading terminal with symbol count more than 1
-        if (String.valueOf(currentLine.charAt(currentCol)).matches("[^<=>|]")) {
-            currentToken = String.valueOf(currentLine.charAt(currentCol));
-            currentCol++;
+        if (currentLine.substring(currentCol).matches("^\\..*")) {
+            if (currentLine.substring(currentCol).matches("^\\.{3}[^\\.].*")) {
+                currentToken = currentLine.substring(currentCol, currentCol + 3);
+                currentCol += 3;
+                shiftedSymbol = 3;
+                return true;
+            }
+
+            currentToken = currentLine.substring(currentCol, currentCol + 1);
+            currentCol += 1;
+            shiftedSymbol = 1;
+            return true;
+        }
+        if (currentLine.substring(currentCol).matches("^[\\*;].*")) {
+            currentToken = currentLine.substring(currentCol, currentCol + 1);
+            currentCol += 1;
             shiftedSymbol = 1;
             return true;
         }
@@ -166,5 +185,37 @@ public class TextFileParser implements TextFileParserInterface {
     @Override
     public boolean isEndOfFile() {
         return _isEndOfFile;
+    }
+
+    @Override
+    public Marker getMarker() {
+        return new Marker(lineNumber, currentCol, shiftedSymbol, currentToken, currentTokenIndex);
+    }
+
+    @Override
+    public void resetToMarker(Marker marker) {
+        if (marker.lineNumber != lineNumber) {
+            throw new RuntimeException("Cannot reset no another line");
+        }
+        currentCol = marker.colNumber;
+        shiftedSymbol = marker.shiftNumber;
+        currentTokenIndex = marker.currentTokenIndex;
+        currentToken = String.valueOf(marker.token);
+    }
+
+    private Marker errorMarker;
+
+    @Override
+    public void markError() {
+        if (errorMarker != null) {
+            errorMarker = null;
+        }
+
+        errorMarker = new Marker(lineNumber, currentCol, shiftedSymbol, currentToken, currentTokenIndex);
+    }
+
+    @Override
+    public Marker getLatestError() {
+        return errorMarker;
     }
 }

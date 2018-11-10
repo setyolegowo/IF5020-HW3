@@ -24,8 +24,9 @@ public class JavaEngine {
     public static TextFileParserInterface parser;
 
     public static void prepareRules() throws ParseException {
-        BNFRule.add("program", rightCreator("[<PackageDeclaration>]"));
+        BNFRule.add("program", rightCreator("[<PackageDeclaration>] {<ImportDeclaration>}"));
         BNFRule.add("PackageDeclaration", rightCreator("package <QualifiedIdentifier> ;"));
+        BNFRule.add("ImportDeclaration", rightCreator("import [static] <QualifiedIdentifier> [. *] ;"));
         BNFRule.add("QualifiedIdentifier", rightCreator("<Identifier> {. <Identifier>}"));
         BNFRule.add("Identifier", rightCreator("<JavaLetter> {<JavaLetterOrDigit>}"));
         BNFRule.add("JavaLetter", new JavaLetter());

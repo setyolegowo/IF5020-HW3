@@ -11,5 +11,9 @@ public interface TextFileParserInterface {
     public int getCurrentLineNumber();
     public String getCurrentLineString();
     public int getCurrentCol();
+    public Marker getMarker();
+    public void resetToMarker(Marker marker);
     public boolean isEndOfFile();
+    public void markError();
+    public Marker getLatestError();
 }

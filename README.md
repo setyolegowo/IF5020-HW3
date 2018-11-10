@@ -22,3 +22,28 @@ Abstract Class `BNFSymbol` (Abstract Factory)
     - List of `BNFSymbol`
 
 Class `FileParser`
+
+## How to Compile
+```
+mvn package
+```
+
+## How to run
+```
+java -jar target/ll_checker-1.0.0.jar --filename <filename>
+```
+
+Run with example
+```
+java -jar target/ll_checker-1.0.0.jar --filename example.txt
+```
+
+## How to run with verbose log mode
+```
+java -jar target/ll_checker-1.0.0.jar --filename <filename> -debug -loglevel 2
+```
+
+Run with example
+```
+java -jar target/ll_checker-1.0.0.jar --filename example.txt -debug -loglevel 2
+```

@@ -10,8 +10,10 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
+import id.ac.itb.if5020.t2018.JavaEngine;
 import id.ac.itb.if5020.t2018.components.BNFSymbol;
 import id.ac.itb.if5020.t2018.components.RuleNotMatchException;
+import id.ac.itb.if5020.t2018.helpers.Marker;
 import id.ac.itb.if5020.t2018.helpers.RuleTokenization;
 
 /**
@@ -48,13 +50,23 @@ public class RepetitionSymbol extends BNFSymbol {
 
     @Override
     public void match() {
+        boolean traceback = false;
+        Marker marker = null;
+
         try {
             while (true) {
+                traceback = false;
+                marker = JavaEngine.parser.getMarker();
                 for (BNFSymbol symbol : rules) {
                     symbol.match();
+                    traceback = true;
                 }
             }
         } catch (RuleNotMatchException e) {
+            JavaEngine.parser.markError();
+            if (traceback) {
+                JavaEngine.parser.resetToMarker(marker);
+            }
         }
     }
 }
