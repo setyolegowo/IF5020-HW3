@@ -44,7 +44,7 @@ public class TextFileParser implements TextFileParserInterface {
     }
 
     public int getCurrentCol() {
-        return currentCol;
+        return currentCol - shiftedSymbol;
     }
 
     @Override
@@ -60,6 +60,11 @@ public class TextFileParser implements TextFileParserInterface {
     }
 
     private String currentLine;
+
+    @Override
+    public String getCurrentLineString() {
+        return currentLine;
+    }
 
     @Override
     public String readNextToken() {
@@ -128,6 +133,7 @@ public class TextFileParser implements TextFileParserInterface {
         if (String.valueOf(currentLine.charAt(currentCol)).matches("[^<=>|]")) {
             currentToken = String.valueOf(currentLine.charAt(currentCol));
             currentCol++;
+            shiftedSymbol = 1;
             return true;
         }
         //

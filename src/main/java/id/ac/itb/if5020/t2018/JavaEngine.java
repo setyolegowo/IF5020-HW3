@@ -6,6 +6,7 @@
 package id.ac.itb.if5020.t2018;
 
 import java.text.ParseException;
+import java.util.logging.Logger;
 
 import id.ac.itb.if5020.t2018.components.BNFRule;
 import id.ac.itb.if5020.t2018.components.specialrules.JavaLetter;
@@ -17,6 +18,8 @@ import id.ac.itb.if5020.t2018.helpers.TextFileParserInterface;
  * @author setyo
  */
 public class JavaEngine {
+
+    public final static Logger LOGGER = Logger.getLogger(JavaEngine.class.getName());
 
     public static TextFileParserInterface parser;
 

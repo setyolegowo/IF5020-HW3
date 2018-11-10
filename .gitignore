@@ -30,6 +30,7 @@ dependency-reduced-pom.xml
 
 # VSCode
 .project
+.factorypath
 .classpath
 .settings/
 .vscode/

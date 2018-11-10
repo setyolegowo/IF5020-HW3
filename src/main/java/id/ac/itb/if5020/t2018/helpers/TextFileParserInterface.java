@@ -9,6 +9,7 @@ public interface TextFileParserInterface {
     public char readCurrentTokenChar();
     public String readNextToken();
     public int getCurrentLineNumber();
+    public String getCurrentLineString();
     public int getCurrentCol();
     public boolean isEndOfFile();
 }

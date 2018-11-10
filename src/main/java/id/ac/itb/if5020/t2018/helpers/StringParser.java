@@ -42,4 +42,8 @@ public class StringParser implements TextFileParserInterface {
         return false;
     }
 
+    @Override
+    public String getCurrentLineString() {
+        return null;
+    }
 }

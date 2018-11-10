@@ -2,42 +2,83 @@ package id.ac.itb.if5020.t2018;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.lang.Exception;
+import java.text.ParseException;
+import java.util.logging.Level;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
-import com.beust.jcommander.ParameterException;
 
 import id.ac.itb.if5020.t2018.helpers.TextFileParser;
 
 final public class Main {
 
+    @Parameter(names = "-debug", description = "Debug mode")
+    private boolean debug = false;
+
+    @Parameter(names = "-loglevel", description = "Verbose log level")
+    private Integer verbose = 1;
+
     @Parameter(names={"--filename", "-f"},description="File to be check",required=true)
-    public String filename;
+    private String filename;
 
     /**
      *
      * @param args Terminal arguments.
      */
-    public static void main(String[] args) throws Exception {
-        JavaEngine.prepareRules();
+    public static void main(String[] args) {
+        JavaEngine.LOGGER.setLevel(Level.OFF);
+
         Main main = new Main();
         try {
             JCommander.newBuilder().addObject(main).build().parse(args);
             main.prepare();
             main.run();
-            System.out.println("File is parsed perfectly.");
-        } catch (ParameterException e) {
-            System.err.println(e.getMessage());
+            if (JavaEngine.parser.isEndOfFile()) {
+                System.out.println("File is parsed perfectly.");
+            } else {
+                main.printError();
+            }
+        } catch (Exception e) {
+            JavaEngine.LOGGER.severe(e.getMessage());
         }
     }
 
-    public void prepare() throws FileNotFoundException, IOException {
+    private void prepare() throws FileNotFoundException, IOException, ParseException {
+        if (debug) {
+            switch (verbose) {
+                case 1:
+                    JavaEngine.LOGGER.setLevel(Level.WARNING);
+                    break;
+
+                case 2:
+                    JavaEngine.LOGGER.setLevel(Level.INFO);
+                    break;
+
+                default: break;
+            }
+        }
+
+        JavaEngine.LOGGER.info("Starting prepare rules...");
+        JavaEngine.prepareRules();
+        JavaEngine.LOGGER.info("Just finished prepare rules");
+
+        JavaEngine.LOGGER.info("Prepare file parser");
         JavaEngine.parser = new TextFileParser(filename);
         JavaEngine.parser.reset();
     }
 
-    public void run() {
+    private void run() {
+        JavaEngine.LOGGER.info("Parser running...");
         JavaEngine.runProgram();
+    }
+
+    private void printError() {
+        System.err.println("Parsing failed in line " + JavaEngine.parser.getCurrentLineNumber());
+        System.err.println();
+        System.err.println(JavaEngine.parser.getCurrentLineString());
+        for (int i = 0; i < JavaEngine.parser.getCurrentCol(); i++) {
+            System.err.print(' ');
+        }
+        System.err.println('^');
     }
 }
