@@ -28,6 +28,8 @@ public abstract class BNFSymbol {
 
     public static BNFSymbol create(String symbol) throws ParseException {
         switch (symbol.charAt(0)) {
+            case '\\':
+                return new TerminalSymbol(symbol.substring(1));
             case '<':
                 return new NonTerminalSymbol(symbol);
             case '[':

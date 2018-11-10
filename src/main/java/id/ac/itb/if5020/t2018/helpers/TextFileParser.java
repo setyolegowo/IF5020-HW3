@@ -138,6 +138,25 @@ public class TextFileParser implements TextFileParserInterface {
         // - Start reading multiline or tagged comment
         // - Start reading single line comment
         // - Start reading terminal with symbol count more than 1
+        if (currentLine.substring(currentCol).matches("^=.*")) {
+            if (currentLine.substring(currentCol).matches("^={2}[^=].*")) {
+                currentToken = currentLine.substring(currentCol, currentCol + 2);
+                currentCol += 2;
+                shiftedSymbol = 2;
+                return true;
+            }
+            if (currentLine.substring(currentCol).matches("^={3}[^=].*")) {
+                currentToken = currentLine.substring(currentCol, currentCol + 3);
+                currentCol += 3;
+                shiftedSymbol = 3;
+                return true;
+            }
+
+            currentToken = currentLine.substring(currentCol, currentCol + 1);
+            currentCol += 1;
+            shiftedSymbol = 1;
+            return true;
+        }
         if (currentLine.substring(currentCol).matches("^\\..*")) {
             if (currentLine.substring(currentCol).matches("^\\.{3}[^\\.].*")) {
                 currentToken = currentLine.substring(currentCol, currentCol + 3);
@@ -151,7 +170,7 @@ public class TextFileParser implements TextFileParserInterface {
             shiftedSymbol = 1;
             return true;
         }
-        if (currentLine.substring(currentCol).matches("^[\\*;].*")) {
+        if (currentLine.substring(currentCol).matches("^[\\*;@{}()$^!~`\\\\\\[\\]].*")) {
             currentToken = currentLine.substring(currentCol, currentCol + 1);
             currentCol += 1;
             shiftedSymbol = 1;
@@ -180,6 +199,7 @@ public class TextFileParser implements TextFileParserInterface {
         char retval = currentToken.charAt(currentTokenIndex++);
         if (currentToken.length() == currentTokenIndex) {
             readNextToken();
+            return 0;
         }
         return retval;
     }

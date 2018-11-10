@@ -19,6 +19,10 @@ public class BNFSingleRuleTest {
             BNFSingleRule singleRule = new BNFSingleRule("if");
             Assert.assertEquals(1, singleRule.tokenRule.size());
             Assert.assertTrue(TerminalSymbol.class.isInstance(singleRule.tokenRule.get(0)));
+
+            singleRule = new BNFSingleRule("\\{");
+            Assert.assertEquals(1, singleRule.tokenRule.size());
+            Assert.assertTrue(TerminalSymbol.class.isInstance(singleRule.tokenRule.get(0)));
         } catch (ParseException exc) {
             Assert.fail("No exception should be thrown");
         }

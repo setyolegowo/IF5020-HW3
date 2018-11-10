@@ -61,6 +61,7 @@ final public class Main {
 
         JavaEngine.LOGGER.info("Starting prepare rules...");
         JavaEngine.prepareRules();
+        JavaEngine.prepareFirstList();
         JavaEngine.LOGGER.info("Just finished prepare rules");
 
         JavaEngine.LOGGER.info("Prepare file parser");

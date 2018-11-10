@@ -20,6 +20,8 @@ public class BNFRule {
 
     private static AbstractMap<String, BNFRule> allrules = new HashMap<>();
 
+    private static AbstractMap<String, List<List<String>>> firsts = new HashMap<>();
+
     public final String left;
 
     public final List<BNFSingleRule> rules;
@@ -45,18 +47,35 @@ public class BNFRule {
         if (specialSymbol != null) {
             specialSymbol.match();
         } else {
+            List<List<String>> firstlist = firsts.get(left);
+            List<String> list;
+            int i = 0;
+
             Marker marker = JavaEngine.parser.getMarker();
-            for (int i = 0; i < rules.size(); i++) {
-                try {
-                    rules.get(i).parse();
-                    break;
-                } catch (RuleNotMatchException e) {
-                    if (i + 1 < rules.size()) {
-                        JavaEngine.parser.resetToMarker(marker);
-                    } else {
-                        throw e;
+            for (BNFSingleRule rule : rules) {
+                if (firstlist != null && i < firstlist.size()) {
+                    list = firstlist.get(i);
+                    if (list.indexOf(marker.token) >= 0) {
+                        rule.parse();
+                        break;
+                    }
+                } else {
+                    try {
+                        rule.parse();
+                        break;
+                    } catch (RuleNotMatchException e) {
+                        if (i + 1 < rules.size()) {
+                            JavaEngine.parser.resetToMarker(marker);
+                        } else {
+                            throw e;
+                        }
                     }
                 }
+                i++;
+            }
+
+            if (i == rules.size()) {
+                throw new RuleNotMatchException("Token is not match with rule " + left);
             }
         }
     }
@@ -73,6 +92,22 @@ public class BNFRule {
 
     public static void add(String left, String[] rights) throws ParseException {
         allrules.put(left, new BNFRule(left, rights));
+    }
+
+    public static void addFirst(String left, String[] terminals) {
+        List<List<String>> first;
+        if (!firsts.containsKey(left)) {
+            first = new ArrayList<List<String>>();
+            firsts.put(left, first);
+        } else {
+            first = firsts.get(left);
+        }
+
+        List<String> _terminals = new ArrayList<>();
+        for (String terminal : terminals) {
+            _terminals.add(terminal);
+        }
+        first.add(_terminals);
     }
 
     public static void add(String left, SpecialRule right) {

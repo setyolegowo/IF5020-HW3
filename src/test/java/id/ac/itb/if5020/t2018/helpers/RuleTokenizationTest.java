@@ -32,6 +32,10 @@ public class RuleTokenizationTest {
         Assert.assertEquals("test tokenize", tokenization.readNextToken(), "terminalsymbol");
         Assert.assertEquals("test tokenize", tokenization.readNextToken(), "<NonTerminal>");
         Assert.assertEquals("test tokenize", tokenization.readNextToken(), "[<NonTerminal> terminal]");
+
+        tokenization = new RuleTokenization("\\{ \\}");
+        Assert.assertEquals("test tokenize", tokenization.readNextToken(), "\\{");
+        Assert.assertEquals("test tokenize", tokenization.readNextToken(), "\\}");
     }
 
     @Test(expected = ParseException.class)

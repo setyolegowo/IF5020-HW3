@@ -25,13 +25,41 @@ public class JavaEngine {
 
     public static void prepareRules() throws ParseException {
         BNFRule.add("Program", rightCreator("[<PackageDeclaration>] {<ImportDeclaration>}"));
-        BNFRule.add("PackageDeclaration", rightCreator("package <QualifiedIdentifier> ;"));
-        BNFRule.add("ImportDeclaration", rightCreator("import [static] <QualifiedIdentifier> [. *] ;"));
+
+        BNFRule.add("PackageDeclaration", rightCreator("{<Annotation>} package <QualifiedIdentifier> ;"));
+
+        BNFRule.add("ImportDeclaration", rightCreator("import [static] <Identifier> <ImportDeclarationEnd>"));
+        BNFRule.add("ImportDeclarationEnd", rightCreator(". <ImportDeclarationStarEnd>", ";"));
+        BNFRule.add("ImportDeclarationStarEnd", rightCreator("* ;", "<Identifier> <ImportDeclarationEnd>"));
+
         BNFRule.add("TypeDeclaration", rightCreator(";", "<ClassDeclaration>", "<EnumDeclaration>", "<InterfaceDeclaration>", "<AnnotationDeclaration>"));
+
+        BNFRule.add("Annotation", rightCreator("@ <QualifiedIdentifier> [<AnnotationRest>]"));
+        BNFRule.add("AnnotationRest", rightCreator("( [<AnnotationElement>] )"));
+        BNFRule.add("AnnotationElement", rightCreator("<AnnotationElementValue>", "<Identifier> [<AnnotationElementRest>]"));
+        BNFRule.add("AnnotationElementRest", rightCreator("= <AnnotationElementValue>"));
+        BNFRule.add("AnnotationElementValue", rightCreator("<Annotation>", "\\{ [<AnnotationElementValues>] [,] \\}"));
+        BNFRule.add("AnnotationElementValues", rightCreator("<AnnotationElementValue> {, <AnnotationElementValue>}"));
+
         BNFRule.add("QualifiedIdentifier", rightCreator("<Identifier> {. <Identifier>}"));
         BNFRule.add("Identifier", rightCreator("<JavaLetter> {<JavaLetterOrDigit>}"));
         BNFRule.add("JavaLetter", new JavaLetter());
         BNFRule.add("JavaLetterOrDigit", new JavaLetterOrDigit());
+    }
+
+    public static void prepareFirstList() {
+        BNFRule.addFirst("PackageDeclaration", rightCreator("package", "@"));
+        BNFRule.addFirst("ImportDeclaration", rightCreator("import"));
+        BNFRule.addFirst("ImportDeclarationEnd", rightCreator("."));
+        BNFRule.addFirst("ImportDeclarationEnd", rightCreator(";"));
+        BNFRule.addFirst("ImportDeclarationStarEnd", rightCreator("*"));
+        BNFRule.addFirst("TypeDeclaration", rightCreator(";"));
+
+        BNFRule.addFirst("Annotation", rightCreator("@"));
+        BNFRule.addFirst("AnnotationRest", rightCreator("("));
+        BNFRule.addFirst("AnnotationElementRest", rightCreator("="));
+        BNFRule.addFirst("AnnotationElementValue", rightCreator("@"));
+        BNFRule.addFirst("AnnotationElementValue", rightCreator("{"));
     }
 
     public static String[] rightCreator(String... right) {

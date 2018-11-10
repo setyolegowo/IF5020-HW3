@@ -15,7 +15,9 @@ public class JavaLetterOrDigit extends NonTerminalSymbol implements SpecialRule 
     public void match() {
         String curchar = String.valueOf(JavaEngine.parser.getCurrentTokenChar());
         if (curchar.matches("^[a-zA-Z0-9]$")) {
-            JavaEngine.parser.readCurrentTokenChar();
+            if (JavaEngine.parser.readCurrentTokenChar() == 0) {
+                throw new SpecialRuleFinish();
+            }
         } else {
             throw new RuleNotMatchException("Character is not Java letter or digit");
         }
