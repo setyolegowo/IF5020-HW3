@@ -13,6 +13,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import id.ac.itb.if5020.t2018.JavaEngine;
+import id.ac.itb.if5020.t2018.helpers.Marker;
+
 public class BNFRule {
 
     private static AbstractMap<String, BNFRule> allrules = new HashMap<>();
@@ -42,8 +45,14 @@ public class BNFRule {
         if (specialSymbol != null) {
             specialSymbol.match();
         } else {
-            for (BNFSingleRule rule : rules) {
-                rule.parse();
+            Marker marker = JavaEngine.parser.getMarker();
+            for (int i = 0; i < rules.size(); i++) {
+                try {
+                    rules.get(i).parse();
+                    break;
+                } catch (RuleNotMatchException e) {
+                    JavaEngine.parser.resetToMarker(marker);
+                }
             }
         }
     }

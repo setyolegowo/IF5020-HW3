@@ -78,7 +78,7 @@ final public class Main {
         System.err.println("Parsing failed in line " + mark.lineNumber);
         System.err.println();
         System.err.println(JavaEngine.parser.getCurrentLineString());
-        for (int i = 0; i < mark.colNumber; i++) {
+        for (int i = 0; i < mark.colNumber - mark.shiftNumber; i++) {
             System.err.print(' ');
         }
         System.err.println('^');
