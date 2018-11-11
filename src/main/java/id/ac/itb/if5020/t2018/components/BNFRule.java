@@ -43,7 +43,7 @@ public class BNFRule {
         specialSymbol = right;
     }
 
-    public void parse() {
+    public void parse() throws ParseException {
         if (specialSymbol != null) {
             specialSymbol.match();
         } else {

@@ -1,4 +1,4 @@
-@SuchAnnotation package id.ac.itb.if5020.t2018;
+@SuchAnnotation package id.ac._itb.if5020.t2018;
 
 import java.text.ParseException;
 import static java.text.PARSE;

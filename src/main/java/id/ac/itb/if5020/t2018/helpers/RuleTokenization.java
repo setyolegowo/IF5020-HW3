@@ -36,8 +36,7 @@ public class RuleTokenization {
             switch (lookUp) {
                 case '\\':
                     position++;
-                    lookUp = needle.charAt(position);
-                    retval += lookUp;
+                    retval += needle.charAt(position);
                     break;
                 case '[':
                     stack.push("]");

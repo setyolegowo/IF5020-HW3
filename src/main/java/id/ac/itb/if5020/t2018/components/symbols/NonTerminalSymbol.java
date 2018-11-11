@@ -6,7 +6,9 @@
 package id.ac.itb.if5020.t2018.components.symbols;
 
 import java.security.InvalidParameterException;
+import java.text.ParseException;
 
+import id.ac.itb.if5020.t2018.JavaEngine;
 import id.ac.itb.if5020.t2018.components.BNFRule;
 import id.ac.itb.if5020.t2018.components.BNFSymbol;
 
@@ -27,8 +29,11 @@ public class NonTerminalSymbol extends BNFSymbol {
     }
 
     @Override
-    public void match() {
+    public void match() throws ParseException {
         BNFRule rule = BNFRule.get(ruleName);
+        if (rule == null) {
+            throw new ParseException("Rule " + ruleName + " not found.", JavaEngine.parser.getCurrentCol());
+        }
         rule.parse();
     }
 }

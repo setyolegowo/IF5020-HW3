@@ -69,7 +69,7 @@ final public class Main {
         JavaEngine.parser.reset();
     }
 
-    private void run() {
+    private void run() throws ParseException {
         JavaEngine.LOGGER.info("Parser running...");
         JavaEngine.runProgram();
     }

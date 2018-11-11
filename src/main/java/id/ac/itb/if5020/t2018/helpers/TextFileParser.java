@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.text.ParseException;
 
 import id.ac.itb.if5020.t2018.JavaEngine;
 
@@ -69,7 +70,7 @@ public class TextFileParser implements TextFileParserInterface {
     }
 
     @Override
-    public String readNextToken() {
+    public String readNextToken() throws ParseException {
         for (;;) {
             if (currentLine == null) {
                 try {
@@ -98,7 +99,7 @@ public class TextFileParser implements TextFileParserInterface {
 
     private int shiftedSymbol;
 
-    private void updateCurrentToken() {
+    private void updateCurrentToken() throws ParseException {
         shiftedSymbol = 0;
         currentTokenIndex = 0;
         currentToken = "";
@@ -132,29 +133,91 @@ public class TextFileParser implements TextFileParserInterface {
     /**
      * @return true when there is token, false otherwise.
      */
-    private boolean handleNonJavaLetterAndDigit() {
+    private boolean handleNonJavaLetterAndDigit() throws ParseException {
         // Separate reading possibility
         // - Start reading string value
+        if (currentLine.substring(currentCol).matches("^\".*")) {
+            shiftedSymbol = 1;
+            while (currentCol + shiftedSymbol < currentLine.length() && currentLine.charAt(currentCol + shiftedSymbol) != '"') {
+                if (currentLine.charAt(currentCol + shiftedSymbol) == '\\') {
+                    shiftedSymbol++;
+                }
+                shiftedSymbol++;
+            }
+
+            if (currentCol + shiftedSymbol >= currentLine.length()) {
+                throw new ParseException("Failed parsing string literal \"" + currentLine + "\". String has no end?", currentCol);
+            }
+            shiftedSymbol++;
+            currentToken = currentLine.substring(currentCol, currentCol + shiftedSymbol);
+            currentCol += shiftedSymbol;
+            return true;
+        }
         // - Start reading multiline or tagged comment
         // - Start reading single line comment
         // - Start reading terminal with symbol count more than 1
         if (currentLine.substring(currentCol).matches("^=.*")) {
             if (currentLine.substring(currentCol).matches("^={2}[^=].*")) {
-                currentToken = currentLine.substring(currentCol, currentCol + 2);
-                currentCol += 2;
                 shiftedSymbol = 2;
+                currentToken = currentLine.substring(currentCol, currentCol + shiftedSymbol);
+                currentCol += shiftedSymbol;
                 return true;
             }
             if (currentLine.substring(currentCol).matches("^={3}[^=].*")) {
-                currentToken = currentLine.substring(currentCol, currentCol + 3);
-                currentCol += 3;
                 shiftedSymbol = 3;
+                currentToken = currentLine.substring(currentCol, currentCol + shiftedSymbol);
+                currentCol += shiftedSymbol;
                 return true;
             }
 
-            currentToken = currentLine.substring(currentCol, currentCol + 1);
-            currentCol += 1;
             shiftedSymbol = 1;
+            currentToken = currentLine.substring(currentCol, currentCol + shiftedSymbol);
+            currentCol += shiftedSymbol;
+            return true;
+        }
+        if (currentLine.substring(currentCol).matches("^<.*")) {
+            if (currentLine.substring(currentCol).matches("^<{3}[^<].*")) {
+                shiftedSymbol = 3;
+                currentToken = currentLine.substring(currentCol, currentCol + shiftedSymbol);
+                currentCol += shiftedSymbol;
+                return true;
+            }
+            if (currentLine.substring(currentCol).matches("^<=[^<=].*")) {
+                shiftedSymbol = 2;
+                currentToken = currentLine.substring(currentCol, currentCol + shiftedSymbol);
+                currentCol += shiftedSymbol;
+                return true;
+            }
+
+            shiftedSymbol = 1;
+            currentToken = currentLine.substring(currentCol, currentCol + shiftedSymbol);
+            currentCol += shiftedSymbol;
+            return true;
+        }
+        if (currentLine.substring(currentCol).matches("^&.*")) {
+            if (currentLine.substring(currentCol).matches("^&{2}[^&].*")) {
+                shiftedSymbol = 2;
+                currentToken = currentLine.substring(currentCol, currentCol + shiftedSymbol);
+                currentCol += shiftedSymbol;
+                return true;
+            }
+
+            shiftedSymbol = 1;
+            currentToken = currentLine.substring(currentCol, currentCol + shiftedSymbol);
+            currentCol += shiftedSymbol;
+            return true;
+        }
+        if (currentLine.substring(currentCol).matches("^>.*")) {
+            if (currentLine.substring(currentCol).matches("^>=[^>=].*")) {
+                shiftedSymbol = 2;
+                currentToken = currentLine.substring(currentCol, currentCol + shiftedSymbol);
+                currentCol += shiftedSymbol;
+                return true;
+            }
+
+            shiftedSymbol = 1;
+            currentToken = currentLine.substring(currentCol, currentCol + shiftedSymbol);
+            currentCol += shiftedSymbol;
             return true;
         }
         if (currentLine.substring(currentCol).matches("^\\..*")) {
@@ -170,7 +233,7 @@ public class TextFileParser implements TextFileParserInterface {
             shiftedSymbol = 1;
             return true;
         }
-        if (currentLine.substring(currentCol).matches("^[\\*;@{}()$^!~`\\\\\\[\\]].*")) {
+        if (currentLine.substring(currentCol).matches("^[\\*,_;@{}()$^!~`\\?\\\\\\[\\]].*")) {
             currentToken = currentLine.substring(currentCol, currentCol + 1);
             currentCol += 1;
             shiftedSymbol = 1;
@@ -195,7 +258,7 @@ public class TextFileParser implements TextFileParserInterface {
     }
 
     @Override
-    public char readCurrentTokenChar() {
+    public char readCurrentTokenChar() throws ParseException {
         char retval = currentToken.charAt(currentTokenIndex++);
         if (currentToken.length() == currentTokenIndex) {
             readNextToken();

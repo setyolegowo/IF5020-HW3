@@ -5,6 +5,8 @@
  */
 package id.ac.itb.if5020.t2018.components.symbols;
 
+import java.text.ParseException;
+
 import id.ac.itb.if5020.t2018.JavaEngine;
 import id.ac.itb.if5020.t2018.components.BNFSymbol;
 import id.ac.itb.if5020.t2018.components.RuleNotMatchException;
@@ -19,7 +21,7 @@ public class TerminalSymbol extends BNFSymbol {
     }
 
     @Override
-    public void match() {
+    public void match() throws ParseException {
         String token = JavaEngine.parser.getCurrentToken();
         if (symbol.equals(token)) {
             JavaEngine.parser.readNextToken();

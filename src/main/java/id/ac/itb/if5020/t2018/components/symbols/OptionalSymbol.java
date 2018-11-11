@@ -50,7 +50,7 @@ public class OptionalSymbol extends BNFSymbol {
     }
 
     @Override
-    public void match() {
+    public void match() throws ParseException {
         boolean traceback = false;
         Marker mark = JavaEngine.parser.getMarker();
 
