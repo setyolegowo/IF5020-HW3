@@ -6,7 +6,7 @@ import java.text.ParseException;
 public interface TextFileParserInterface {
     public void reset() throws IOException;
     public String getCurrentToken();
-    public char getCurrentTokenChar();
+    public char getCurrentTokenChar() throws ParseException;
     public char readCurrentTokenChar() throws ParseException;
     public String readNextToken() throws ParseException;
     public int getCurrentLineNumber();

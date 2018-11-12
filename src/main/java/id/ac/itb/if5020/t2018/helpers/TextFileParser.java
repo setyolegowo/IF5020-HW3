@@ -253,18 +253,17 @@ public class TextFileParser implements TextFileParserInterface {
     private int currentTokenIndex = 0;
 
     @Override
-    public char getCurrentTokenChar() {
+    public char getCurrentTokenChar() throws ParseException {
+        if (currentTokenIndex >= currentToken.length()) {
+            readNextToken();
+            return 0;
+        }
         return currentToken.charAt(currentTokenIndex);
     }
 
     @Override
-    public char readCurrentTokenChar() throws ParseException {
-        char retval = currentToken.charAt(currentTokenIndex++);
-        if (currentToken.length() == currentTokenIndex) {
-            readNextToken();
-            return 0;
-        }
-        return retval;
+    public char readCurrentTokenChar() {
+        return currentToken.charAt(currentTokenIndex++);
     }
 
     @Override

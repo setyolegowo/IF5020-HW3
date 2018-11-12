@@ -13,7 +13,6 @@ import java.util.List;
 import id.ac.itb.if5020.t2018.JavaEngine;
 import id.ac.itb.if5020.t2018.components.BNFSymbol;
 import id.ac.itb.if5020.t2018.components.RuleNotMatchException;
-import id.ac.itb.if5020.t2018.components.specialrules.SpecialRuleFinish;
 import id.ac.itb.if5020.t2018.helpers.Marker;
 import id.ac.itb.if5020.t2018.helpers.RuleTokenization;
 
@@ -64,6 +63,6 @@ public class OptionalSymbol extends BNFSymbol {
             if (traceback) {
                 JavaEngine.parser.resetToMarker(mark);
             }
-        } catch (SpecialRuleFinish e) {}
+        }
     }
 }
