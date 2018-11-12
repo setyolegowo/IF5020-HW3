@@ -105,14 +105,15 @@ public class TextFileParser implements TextFileParserInterface {
         currentToken = "";
 
         for (;currentCol + shiftedSymbol < currentLine.length();) {
-            if (shiftedSymbol == 0) {
-                if (currentLine.charAt(currentCol + shiftedSymbol) <= ' ') {
-                    currentCol++;
-                    continue;
-                }
+            if (shiftedSymbol == 0 && currentLine.charAt(currentCol + shiftedSymbol) <= ' ') {
+                currentCol++;
+                continue;
             }
             while (currentLine.substring(currentCol, currentCol + shiftedSymbol + 1).matches("[a-zA-Z0-9]+")) {
                 shiftedSymbol++;
+                if (currentCol + shiftedSymbol >= currentLine.length()) {
+                    break;
+                }
             }
             if (shiftedSymbol == 0) {
                 if (handleNonJavaLetterAndDigit()) {
@@ -263,6 +264,9 @@ public class TextFileParser implements TextFileParserInterface {
 
     @Override
     public char readCurrentTokenChar() {
+        if (currentTokenIndex >= currentToken.length()) {
+            return 0;
+        }
         return currentToken.charAt(currentTokenIndex++);
     }
 

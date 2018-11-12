@@ -64,8 +64,11 @@ public class BNFRule {
                         rule.parse();
                         break;
                     } catch (RuleNotMatchException e) {
+                        Marker currentMarker = JavaEngine.parser.getMarker();
                         if (i + 1 < rules.size()) {
-                            JavaEngine.parser.resetToMarker(marker);
+                            if (currentMarker.hashCode() != marker.hashCode()) {
+                                JavaEngine.parser.resetToMarker(marker);
+                            }
                         } else {
                             throw e;
                         }
