@@ -4,3 +4,8 @@ import java.text.ParseException;
 import static java.text.PARSE;
 import java.text.ParseException.*;
 import static java.text.ParseException.*;
+
+@Annotation
+public static class ClassName {
+
+}
