@@ -24,6 +24,15 @@ public class JavaEngine {
     public static TextFileParserInterface parser;
 
     public static void prepareRules() throws ParseException {
+        prepareRuleProgram();
+        prepareRuleClass();
+        prepareRuleEnum();
+        prepareRuleInterface();
+        prepareRuleAnnotationType();
+        prepareRuleCommon();
+    }
+
+    private static void prepareRuleProgram() throws ParseException {
         BNFRule.add("Program", rightCreator("[<PackageDeclaration>] {<ImportDeclaration>} {<TypeDeclaration>}"));
 
         // PACKAGEDECLARATION
@@ -41,7 +50,9 @@ public class JavaEngine {
         BNFRule.add("ClassOrInterfaceDeclaration", rightCreator("<ClassDeclaration>", "<InterfaceDeclaration>"));
         BNFRule.add("ClassDeclaration", rightCreator("<NormalClassDeclaration>", "<EnumDeclaration>"));
         BNFRule.add("InterfaceDeclaration", rightCreator("<NormalInterfaceDeclaration>", "<AnnotationTypeDeclaration>"));
+    }
 
+    private static void prepareRuleClass() throws ParseException {
         // TYPEDECLARATION CLASS
         BNFRule.add(
             "NormalClassDeclaration",
@@ -114,23 +125,32 @@ public class JavaEngine {
             "ConstructorDeclaratorRest",
             rightCreator("<FormalParameters> [throws <QualifiedIdentifierList>] <Block>")
         );
+    }
 
+    private static void prepareRuleEnum() throws ParseException {
         // TYPEDECLARATION ENUM
         BNFRule.add("EnumDeclaration", rightCreator("enum <Identifier> [implements <TypeList>] <EnumBody>"));
+    }
 
+    private static void prepareRuleInterface() throws ParseException {
         // TYPEDECLARATION INTERFACE
         BNFRule.add(
             "NormalInterfaceDeclaration",
             rightCreator("interface <Identifier> [<TypeParameters>] [extends <TypeList>] <InterfaceBody>")
         );
+    }
 
+    private static void prepareRuleAnnotationType() throws ParseException {
         // TYPEDECLARATION Annotation
         BNFRule.add("AnnotationTypeDeclaration", rightCreator("@ interface <Identifier> <AnnotationTypeBody>"));
+    }
 
+    private static void prepareRuleCommon() throws ParseException {
         // ANNOTATION
         BNFRule.add("Annotation", rightCreator("@ <QualifiedIdentifier> [<AnnotationRest>]"));
         BNFRule.add("AnnotationRest", rightCreator("( [<AnnotationElement>] )"));
-        BNFRule.add("AnnotationElement", rightCreator("<AnnotationElementValue>", "<Identifier> [<AnnotationElementRest>]"));
+        BNFRule.add("AnnotationElement",
+                rightCreator("<AnnotationElementValue>", "<Identifier> [<AnnotationElementRest>]"));
         BNFRule.add("AnnotationElementRest", rightCreator("= <AnnotationElementValue>"));
         // TODO Expression non terminal symbol for AnnotationElementValue
         BNFRule.add("AnnotationElementValue", rightCreator("<Annotation>", "\\{ [<AnnotationElementValues>] [,] \\}"));
@@ -138,7 +158,8 @@ public class JavaEngine {
 
         BNFRule.add("FormalParameters", rightCreator("( [<FormalParameterDecls>] )"));
         BNFRule.add("FormalParameterDecls", rightCreator("{<VariableModifier>} <Type> <FormalParameterDeclsRest>"));
-        BNFRule.add("FormalParameterDeclsRest", rightCreator("... <VariableDeclaratorId>", "<VariableDeclaratorId> [, <FormalParameterDecls>]"));
+        BNFRule.add("FormalParameterDeclsRest",
+                rightCreator("... <VariableDeclaratorId>", "<VariableDeclaratorId> [, <FormalParameterDecls>]"));
 
         // EXPRESSION
         BNFRule.add("VariableModifier", rightCreator("final", "<Annotation>"));
@@ -155,7 +176,7 @@ public class JavaEngine {
         BNFRule.add("TypeParameter", rightCreator("<Identifier> [extends <Bound>]"));
         BNFRule.add("Bound", rightCreator("<ReferenceType> {& <ReferenceType>}"));
 
-        BNFRule.add("Type", rightCreator("<BasicType> {\\[ \\]}", "<ReferenceType> {\\{ \\}}"));
+        BNFRule.add("Type", rightCreator("<BasicType> {\\[ \\]}", "<ReferenceType> {\\[ \\]}"));
         BNFRule.add("BasicType", rightCreator("byte", "short", "char", "int", "long", "float", "double", "boolean"));
 
         BNFRule.add("TypeList", rightCreator("<ReferenceType> {, <ReferenceType>}"));
@@ -164,22 +185,12 @@ public class JavaEngine {
         BNFRule.add("BlockOrSemicolon", rightCreator(";", "<Block>"));
 
         BNFRule.add("Modifier", rightCreator("{<Annotation>} {<ModifierAfterAnnotation>}"));
-        BNFRule.add(
-            "ModifierAfterAnnotation",
-            rightCreator(
-                "public", "private", "protected", "final", "static", "abstract", "native",
-                "synchronized", "transient", "volatile", "strictfp"
-            )
-        );
+        BNFRule.add("ModifierAfterAnnotation", rightCreator("public", "private", "protected", "final", "static",
+                "abstract", "native", "synchronized", "transient", "volatile", "strictfp"));
 
         BNFRule.add("ModifierWithoutStatic", rightCreator("{<Annotation>} {<ModifierAfterAnnotationWithoutStatic>}"));
-        BNFRule.add(
-            "ModifierAfterAnnotationWithoutStatic",
-            rightCreator(
-                "public", "private", "protected", "final", "abstract", "native", "synchronized",
-                "transient", "volatile", "strictfp"
-            )
-        );
+        BNFRule.add("ModifierAfterAnnotationWithoutStatic", rightCreator("public", "private", "protected", "final",
+                "abstract", "native", "synchronized", "transient", "volatile", "strictfp"));
 
         BNFRule.add("QualifiedIdentifier", rightCreator("<Identifier> {. <Identifier>}"));
         BNFRule.add("QualifiedIdentifierList", rightCreator("<QualifiedIdentifier> {, <QualifiedIdentifier>}"));
