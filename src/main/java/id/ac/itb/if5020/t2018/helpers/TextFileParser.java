@@ -58,7 +58,10 @@ public class TextFileParser implements TextFileParserInterface {
     private String currentToken;
 
     @Override
-    public String getCurrentToken() {
+    public String getCurrentToken() throws ParseException {
+        if (currentTokenIndex > 0) {
+            readNextToken();
+        }
         return currentToken;
     }
 
