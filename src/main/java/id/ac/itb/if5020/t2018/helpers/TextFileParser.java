@@ -209,7 +209,15 @@ public class TextFileParser implements TextFileParserInterface {
             shiftedSymbol = 1;
             return updateAfterTokenization();
         }
-        if (currentLine.substring(currentCol).matches("^[\\*,_;@{}()$^!~`\\?\\\\\\[\\]].*")) {
+        if (currentLine.substring(currentCol).matches("^@.*")) {
+            if (currentLine.substring(currentCol).matches("^@interface.*")) {
+                shiftedSymbol = 10;
+                return updateAfterTokenization();
+            }
+            shiftedSymbol = 1;
+            return updateAfterTokenization();
+        }
+        if (currentLine.substring(currentCol).matches("^[\\*,;{}()$^!~`\\?\\\\\\[\\]].*")) {
             shiftedSymbol = 1;
             return updateAfterTokenization();
         }

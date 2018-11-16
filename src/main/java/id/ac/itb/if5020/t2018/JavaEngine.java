@@ -32,10 +32,24 @@ public class JavaEngine {
     }
 
     private static void prepareRuleProgram() throws ParseException {
-        BNFRule.add("Program", rightCreator("[<PackageDeclaration>] {<ImportDeclaration>} {<TypeDeclaration>}"));
+        BNFRule.add(
+            "Program",
+            rightCreator(
+                "<Annotation> {<Annotation>} <EarlyAnnotation>",
+                "[<PackageDeclaration>] {<ImportDeclaration>} {<TypeDeclaration>}"
+            )
+        );
+        BNFRule.add(
+            "EarlyAnnotation",
+            rightCreator(
+                "<PackageDeclaration> {<ImportDeclaration>} {<TypeDeclaration>}",
+                "<ClassOrInterfaceDeclaration> {<TypeDeclaration>}",
+                "<TypeDeclarationModifier> {<TypeDeclarationModifier>} <ClassOrInterfaceDeclaration> {<TypeDeclaration>}"
+            )
+        );
 
         // PACKAGEDECLARATION
-        BNFRule.add("PackageDeclaration", rightCreator("{<Annotation>} package <QualifiedIdentifier> ;"));
+        BNFRule.add("PackageDeclaration", rightCreator("package <QualifiedIdentifier> ;"));
 
         // IMPORTDECLARATION
         BNFRule.add("ImportDeclaration", rightCreator("import [static] <Identifier> <ImportDeclarationEnd>"));
@@ -43,7 +57,14 @@ public class JavaEngine {
         BNFRule.add("ImportDeclarationStarEnd", rightCreator("* ;", "<Identifier> <ImportDeclarationEnd>"));
 
         // TYPEDECLARATION
-        BNFRule.add("TypeDeclaration", rightCreator(";", "[<TypeDeclarationModifierWithAnnotation>] <ClassOrInterfaceDeclaration>"));
+        BNFRule.add(
+            "TypeDeclaration",
+            rightCreator(
+                ";",
+                "<ClassOrInterfaceDeclaration>",
+                "<TypeDeclarationModifierWithAnnotation> <ClassOrInterfaceDeclaration>"
+            )
+        );
         BNFRule.add("TypeDeclarationModifierWithAnnotation", rightCreator("{<Annotation>} {<TypeDeclarationModifier>}"));
         BNFRule.add("TypeDeclarationModifier", rightCreator("public", "private", "protected", "static", "final", "abstract"));
         BNFRule.add("ClassOrInterfaceDeclaration", rightCreator("<ClassDeclaration>", "<InterfaceDeclaration>"));
@@ -55,12 +76,17 @@ public class JavaEngine {
         // TYPEDECLARATION CLASS
         BNFRule.add(
             "NormalClassDeclaration",
-            rightCreator("class <Identifier> [<TypeParameters>] [extends <Type>] [implements <TypeList>] <ClassBody>")
+            rightCreator("class <Identifier> [<TypeParameters>] [extends <Type>] [implements <TypeList>] \\{ {<ClassBodyDeclaration>} \\}")
         );
-        BNFRule.add("ClassBody", rightCreator("\\{ {<ClassBodyDeclaration>} \\}"));
         BNFRule.add(
             "ClassBodyDeclaration",
-            rightCreator(";", "{<ModifierWithoutStatic>} <MemberDeclaration>", "[static] <ClassBodyDeclarationStaticPrefix>")
+            rightCreator(
+                ";",
+                "<ModifierWithoutStatic> {<ModifierWithoutStatic>} <MemberDeclaration>",
+                "<Block>",
+                "static <ClassBodyDeclarationStaticPrefix>",
+                "<MemberDeclaration>"
+            )
         );
         BNFRule.add(
             "ClassBodyDeclarationStaticPrefix",
@@ -141,7 +167,7 @@ public class JavaEngine {
 
     private static void prepareRuleAnnotationType() throws ParseException {
         // TYPEDECLARATION Annotation
-        BNFRule.add("AnnotationTypeDeclaration", rightCreator("@ interface <Identifier> <AnnotationTypeBody>"));
+        BNFRule.add("AnnotationTypeDeclaration", rightCreator("@interface <Identifier> <AnnotationTypeBody>"));
     }
 
     private static void prepareRuleCommon() throws ParseException {
@@ -197,29 +223,38 @@ public class JavaEngine {
     }
 
     public static void prepareFirstList() {
-        BNFRule.addFirst("PackageDeclaration", rightCreator("package", "@"));
+        BNFRule.addFirst("Program", rightCreator("@"));
+        BNFRule.addFirst("EarlyAnnotation", rightCreator("package"));
+        BNFRule.addFirst("EarlyAnnotation", rightCreator("class", "enum", "interface", "@interface"));
+        BNFRule.addFirst("EarlyAnnotation", rightCreator("abstract", "final", "private", "protected", "public", "static"));
+
+        BNFRule.addFirst("PackageDeclaration", rightCreator("package"));
 
         BNFRule.addFirst("ImportDeclaration", rightCreator("import"));
         BNFRule.addFirst("ImportDeclarationEnd", rightCreator("."));
         BNFRule.addFirst("ImportDeclarationEnd", rightCreator(";"));
         BNFRule.addFirst("ImportDeclarationStarEnd", rightCreator("*"));
+        BNFRule.addFirst("ImportDeclarationStarEnd", new Identifier());
 
         BNFRule.addFirst("TypeDeclaration", rightCreator(";"));
-        BNFRule.addFirst("TypeDeclarationModifierWithAnnotation", rightCreator("@", "public", "private", "protected",
-                "static", "final", "abstract"));
+        BNFRule.addFirst("TypeDeclaration", rightCreator("class", "enum", "interface", "@interface"));
+        BNFRule.addFirst("TypeDeclaration", rightCreator("@", "abstract", "final", "private", "protected", "public", "static"));
+        BNFRule.addFirst("TypeDeclarationModifierWithAnnotation", rightCreator("@"));
+        BNFRule.addFirst("TypeDeclarationModifierWithAnnotation", rightCreator("public", "private", "protected", "static", "final", "abstract"));
         BNFRule.addFirst("ClassOrInterfaceDeclaration", rightCreator("class", "enum"));
-        BNFRule.addFirst("ClassOrInterfaceDeclaration", rightCreator("interface", "@"));
+        BNFRule.addFirst("ClassOrInterfaceDeclaration", rightCreator("interface", "@interface"));
         BNFRule.addFirst("ClassDeclaration", rightCreator("class"));
         BNFRule.addFirst("ClassDeclaration", rightCreator("enum"));
         BNFRule.addFirst("InterfaceDeclaration", rightCreator("interface"));
-        BNFRule.addFirst("InterfaceDeclaration", rightCreator("@"));
+        BNFRule.addFirst("InterfaceDeclaration", rightCreator("@interface"));
 
         BNFRule.addFirst("NormalClassDeclaration", rightCreator("class"));
-        BNFRule.addFirst("ClassBody", rightCreator("{"));
         BNFRule.addFirst("ClassBodyDeclaration", rightCreator(";"));
         BNFRule.addFirst("ClassBodyDeclaration", rightCreator("@", "public", "private", "protected", "final",
                 "abstract", "native", "synchronized", "transient", "volatile", "strictfp"));
-        BNFRule.addFirst("ClassBodyDeclaration", rightCreator("static", "{"));
+        BNFRule.addFirst("ClassBodyDeclaration", rightCreator("{"));
+        BNFRule.addFirst("ClassBodyDeclaration", rightCreator("static"));
+        BNFRule.addFirst("ClassBodyDeclaration", rightCreator("void"), new Identifier());
         BNFRule.addFirst("ClassBodyDeclarationStaticPrefix", rightCreator("{"));
 
         BNFRule.addFirst("TypeArguments", rightCreator("<"));
@@ -241,6 +276,7 @@ public class JavaEngine {
         BNFRule.addFirst("TypeDeclarationModifierWithAnnotation", rightCreator("@", "public", "private", "protected", "final",
                 "static", "abstract", "native", "synchronized", "transient", "volatile", "strictfp"));
 
+        BNFRule.addFirst("QualifiedIdentigier", new Identifier());
         BNFRule.addFirst("Identifier", new Identifier());
     }
 
