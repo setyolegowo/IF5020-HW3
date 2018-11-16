@@ -7,4 +7,5 @@ import java.text.ParseException;
  */
 public interface SpecialRule {
     public void match() throws ParseException;
+    public boolean matching(char _char);
 }

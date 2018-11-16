@@ -15,12 +15,13 @@ import java.util.List;
 
 import id.ac.itb.if5020.t2018.JavaEngine;
 import id.ac.itb.if5020.t2018.helpers.Marker;
+import id.ac.itb.if5020.t2018.helpers.SpecialRuleOrString;
 
 public class BNFRule {
 
     private static AbstractMap<String, BNFRule> allrules = new HashMap<>();
 
-    private static AbstractMap<String, List<List<String>>> firsts = new HashMap<>();
+    private static AbstractMap<String, List<List<SpecialRuleOrString>>> firsts = new HashMap<>();
 
     public final String left;
 
@@ -47,16 +48,21 @@ public class BNFRule {
         if (specialSymbol != null) {
             specialSymbol.match();
         } else {
-            List<List<String>> firstlist = firsts.get(left);
-            List<String> list;
+            List<List<SpecialRuleOrString>> firstlist = firsts.get(left);
             int i = 0;
 
             Marker marker = JavaEngine.parser.getMarker();
             for (BNFSingleRule rule : rules) {
                 if (firstlist != null && i < firstlist.size()) {
-                    list = firstlist.get(i);
-                    if (list.indexOf(marker.token) >= 0) {
-                        rule.parse();
+                    boolean rsb = false;
+                    for(SpecialRuleOrString rs : firstlist.get(i)) {
+                        if (rs.match(marker.token)) {
+                            rule.parse();
+                            rsb = true;
+                            break;
+                        }
+                    }
+                    if (rsb) {
                         break;
                     }
                 } else {
@@ -98,17 +104,56 @@ public class BNFRule {
     }
 
     public static void addFirst(String left, String[] terminals) {
-        List<List<String>> first;
+        List<List<SpecialRuleOrString>> first;
         if (!firsts.containsKey(left)) {
-            first = new ArrayList<List<String>>();
+            first = new ArrayList<List<SpecialRuleOrString>>();
             firsts.put(left, first);
         } else {
             first = firsts.get(left);
         }
 
-        List<String> _terminals = new ArrayList<>();
+        List<SpecialRuleOrString> _terminals = new ArrayList<>();
         for (String terminal : terminals) {
-            _terminals.add(terminal);
+            _terminals.add(new SpecialRuleOrString(terminal));
+        }
+        first.add(_terminals);
+    }
+
+    public static void addFirst(String left, String[] terminals, SpecialRule... specialRules) {
+        List<List<SpecialRuleOrString>> first;
+        if (!firsts.containsKey(left)) {
+            first = new ArrayList<List<SpecialRuleOrString>>();
+            firsts.put(left, first);
+        } else {
+            first = firsts.get(left);
+        }
+
+        List<SpecialRuleOrString> _terminals = new ArrayList<>();
+        for (String terminal : terminals) {
+            _terminals.add(new SpecialRuleOrString(terminal));
+        }
+        if (specialRules != null) {
+            for(SpecialRule newrule : specialRules) {
+                _terminals.add(new SpecialRuleOrString(newrule));
+            }
+        }
+        first.add(_terminals);
+    }
+
+    public static void addFirst(String left, SpecialRule... specialRules) {
+        List<List<SpecialRuleOrString>> first;
+        if (!firsts.containsKey(left)) {
+            first = new ArrayList<List<SpecialRuleOrString>>();
+            firsts.put(left, first);
+        } else {
+            first = firsts.get(left);
+        }
+
+        List<SpecialRuleOrString> _terminals = new ArrayList<>();
+        if (specialRules != null) {
+            for (SpecialRule newrule : specialRules) {
+                _terminals.add(new SpecialRuleOrString(newrule));
+            }
         }
         first.add(_terminals);
     }
@@ -123,5 +168,6 @@ public class BNFRule {
 
     public static void clear() {
         allrules.clear();
+        firsts.clear();
     }
 }

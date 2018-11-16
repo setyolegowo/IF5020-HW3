@@ -6,6 +6,7 @@
 package id.ac.itb.if5020.t2018.components;
 
 import java.text.ParseException;
+import java.util.Objects;
 
 import id.ac.itb.if5020.t2018.components.symbols.NonTerminalSymbol;
 import id.ac.itb.if5020.t2018.components.symbols.OptionalSymbol;
@@ -39,5 +40,10 @@ public abstract class BNFSymbol {
         }
 
         return new TerminalSymbol(symbol);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(symbol);
     }
 }

@@ -59,7 +59,7 @@ public class TextFileParser implements TextFileParserInterface {
 
     @Override
     public String getCurrentToken() throws ParseException {
-        if (currentTokenIndex > 0) {
+        if (currentTokenIndex >= currentToken.length()) {
             readNextToken();
         }
         return currentToken;

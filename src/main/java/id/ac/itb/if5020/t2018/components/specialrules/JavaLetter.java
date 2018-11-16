@@ -15,11 +15,15 @@ public class JavaLetter extends NonTerminalSymbol implements SpecialRule {
 
     @Override
     public void match() throws ParseException {
-        String curchar = String.valueOf(JavaEngine.parser.getCurrentTokenChar());
-        if (curchar.matches("^[a-zA-Z]$")) {
+        if (matching(JavaEngine.parser.getCurrentTokenChar())) {
             JavaEngine.parser.readCurrentTokenChar();
         } else {
             throw new RuleNotMatchException("Character is not Java letter");
         }
+    }
+
+    @Override
+    public boolean matching(char _char) {
+        return String.valueOf(_char).matches("^[a-zA-Z]$");
     }
 }

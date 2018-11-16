@@ -10,7 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import id.ac.itb.if5020.t2018.components.BNFRule;
-import id.ac.itb.if5020.t2018.components.specialrules.JavaLetterOrDigit;
+import id.ac.itb.if5020.t2018.components.specialrules.*;
 import id.ac.itb.if5020.t2018.helpers.TextFileParser;
 
 public class TestParsingRule {
@@ -30,6 +30,26 @@ public class TestParsingRule {
 
         parse("Start");
     }
+
+    // @Test
+    // public void testParsing2() throws IOException, ParseException {
+    //     JavaEngine.parser = new TextFileParser(new BufferedReader(new StringReader("_t_")));
+
+    //     BNFRule.add("Identifier", JavaEngine.rightCreator("<JavaLetterOrUnderscore> {<JavaLetterOrDigitOrUnderscore>}"));
+    //     BNFRule.add("JavaLetterOrUnderscore", JavaEngine.rightCreator("_", "<JavaLetter>"));
+    //     BNFRule.add("JavaLetterOrDigitOrUnderscore", JavaEngine.rightCreator("_", "<JavaLetterOrDigit>"));
+    //     BNFRule.add("JavaLetter", new JavaLetter());
+    //     BNFRule.add("JavaLetterOrDigit", new JavaLetterOrDigit());
+
+    //     BNFRule.addFirst("Start", JavaEngine.rightCreator("_"), new JavaLetter());
+    //     BNFRule.addFirst("Identifier", JavaEngine.rightCreator("_"), new JavaLetter());
+    //     BNFRule.addFirst("JavaLetterOrUnderscore", JavaEngine.rightCreator("_"));
+    //     BNFRule.addFirst("JavaLetterOrUnderscore", new JavaLetter());
+    //     BNFRule.addFirst("JavaLetterOrDigitOrUnderscore", JavaEngine.rightCreator("_"));
+    //     BNFRule.addFirst("JavaLetterOrDigitOrUnderscore", new JavaLetterOrDigit());
+
+    //     parse("Identifier");
+    // }
 
     private void parse(String startSymbol) throws IOException, ParseException {
         JavaEngine.parser.readNextToken();
