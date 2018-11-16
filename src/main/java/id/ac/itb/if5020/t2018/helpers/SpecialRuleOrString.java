@@ -23,6 +23,9 @@ public class SpecialRuleOrString {
     }
 
     public boolean match(String arg) {
+        if (arg == null) {
+            return false;
+        }
         if (_string != null) {
             return _string.equals(arg);
         }

@@ -59,9 +59,6 @@ public class TextFileParser implements TextFileParserInterface {
 
     @Override
     public String getCurrentToken() throws ParseException {
-        if (currentTokenIndex >= currentToken.length()) {
-            readNextToken();
-        }
         return currentToken;
     }
 
@@ -108,23 +105,12 @@ public class TextFileParser implements TextFileParserInterface {
         currentToken = "";
 
         for (;currentCol + shiftedSymbol < currentLine.length();) {
+            // Skip spacing
             if (shiftedSymbol == 0 && currentLine.charAt(currentCol + shiftedSymbol) <= ' ') {
                 currentCol++;
                 continue;
             }
-            while (currentLine.substring(currentCol, currentCol + shiftedSymbol + 1).matches("[a-zA-Z0-9]+")) {
-                shiftedSymbol++;
-                if (currentCol + shiftedSymbol >= currentLine.length()) {
-                    break;
-                }
-            }
-            if (shiftedSymbol == 0) {
-                if (handleNonJavaLetterAndDigit()) {
-                    break;
-                }
-            } else {
-                currentToken = currentLine.substring(currentCol, currentCol + shiftedSymbol);
-                currentCol += shiftedSymbol;
+            if (handleTokenization()) {
                 break;
             }
         }
@@ -137,7 +123,7 @@ public class TextFileParser implements TextFileParserInterface {
     /**
      * @return true when there is token, false otherwise.
      */
-    private boolean handleNonJavaLetterAndDigit() throws ParseException {
+    private boolean handleTokenization() throws ParseException {
         // Separate reading possibility
         // - Start reading string value
         if (currentLine.substring(currentCol).matches("^\".*")) {
@@ -153,98 +139,110 @@ public class TextFileParser implements TextFileParserInterface {
                 throw new ParseException("Failed parsing string literal \"" + currentLine + "\". String has no end?", currentCol);
             }
             shiftedSymbol++;
-            currentToken = currentLine.substring(currentCol, currentCol + shiftedSymbol);
-            currentCol += shiftedSymbol;
-            return true;
+            return updateAfterTokenization();
         }
         // - Start reading multiline or tagged comment
         // - Start reading single line comment
         // - Start reading terminal with symbol count more than 1
         if (currentLine.substring(currentCol).matches("^=.*")) {
-            if (currentLine.substring(currentCol).matches("^={2}[^=].*")) {
+            if (currentLine.substring(currentCol).matches("^={2}[^=]*")) {
                 shiftedSymbol = 2;
-                currentToken = currentLine.substring(currentCol, currentCol + shiftedSymbol);
-                currentCol += shiftedSymbol;
-                return true;
+                return updateAfterTokenization();
             }
-            if (currentLine.substring(currentCol).matches("^={3}[^=].*")) {
+            if (currentLine.substring(currentCol).matches("^={3}[^=]*")) {
                 shiftedSymbol = 3;
-                currentToken = currentLine.substring(currentCol, currentCol + shiftedSymbol);
-                currentCol += shiftedSymbol;
-                return true;
+                return updateAfterTokenization();
             }
 
             shiftedSymbol = 1;
-            currentToken = currentLine.substring(currentCol, currentCol + shiftedSymbol);
-            currentCol += shiftedSymbol;
-            return true;
+            return updateAfterTokenization();
         }
         if (currentLine.substring(currentCol).matches("^<.*")) {
-            if (currentLine.substring(currentCol).matches("^<{3}[^<].*")) {
+            if (currentLine.substring(currentCol).matches("^<{3}[^<]*")) {
                 shiftedSymbol = 3;
-                currentToken = currentLine.substring(currentCol, currentCol + shiftedSymbol);
-                currentCol += shiftedSymbol;
-                return true;
+                return updateAfterTokenization();
             }
-            if (currentLine.substring(currentCol).matches("^<=[^<=].*")) {
+            if (currentLine.substring(currentCol).matches("^<=[^<=]*")) {
                 shiftedSymbol = 2;
-                currentToken = currentLine.substring(currentCol, currentCol + shiftedSymbol);
-                currentCol += shiftedSymbol;
-                return true;
+                return updateAfterTokenization();
             }
 
             shiftedSymbol = 1;
-            currentToken = currentLine.substring(currentCol, currentCol + shiftedSymbol);
-            currentCol += shiftedSymbol;
-            return true;
+            return updateAfterTokenization();
         }
         if (currentLine.substring(currentCol).matches("^&.*")) {
-            if (currentLine.substring(currentCol).matches("^&{2}[^&].*")) {
+            if (currentLine.substring(currentCol).matches("^&{2}[^&]*")) {
                 shiftedSymbol = 2;
-                currentToken = currentLine.substring(currentCol, currentCol + shiftedSymbol);
-                currentCol += shiftedSymbol;
-                return true;
+                return updateAfterTokenization();
             }
 
             shiftedSymbol = 1;
-            currentToken = currentLine.substring(currentCol, currentCol + shiftedSymbol);
-            currentCol += shiftedSymbol;
-            return true;
+            return updateAfterTokenization();
         }
         if (currentLine.substring(currentCol).matches("^>.*")) {
-            if (currentLine.substring(currentCol).matches("^>=[^>=].*")) {
+            if (currentLine.substring(currentCol).matches("^>=[^>=]*")) {
                 shiftedSymbol = 2;
-                currentToken = currentLine.substring(currentCol, currentCol + shiftedSymbol);
-                currentCol += shiftedSymbol;
-                return true;
+                return updateAfterTokenization();
             }
 
             shiftedSymbol = 1;
-            currentToken = currentLine.substring(currentCol, currentCol + shiftedSymbol);
-            currentCol += shiftedSymbol;
-            return true;
+            return updateAfterTokenization();
         }
         if (currentLine.substring(currentCol).matches("^\\..*")) {
-            if (currentLine.substring(currentCol).matches("^\\.{3}[^\\.].*")) {
-                currentToken = currentLine.substring(currentCol, currentCol + 3);
-                currentCol += 3;
+            if (currentLine.substring(currentCol).matches("^\\.{3}[^\\.]*")) {
                 shiftedSymbol = 3;
-                return true;
+                return updateAfterTokenization();
             }
 
-            currentToken = currentLine.substring(currentCol, currentCol + 1);
-            currentCol += 1;
             shiftedSymbol = 1;
-            return true;
+            return updateAfterTokenization();
+        }
+        if (currentLine.substring(currentCol).matches("^\\[\\].*")) {
+            shiftedSymbol = 2;
+            return updateAfterTokenization();
+        }
+        if (currentLine.substring(currentCol).matches("^\\+.*")) {
+            if (currentLine.substring(currentCol).matches("^\\+\\+[^\\+]*")) {
+                shiftedSymbol = 3;
+                return updateAfterTokenization();
+            }
+            shiftedSymbol = 1;
+            return updateAfterTokenization();
         }
         if (currentLine.substring(currentCol).matches("^[\\*,_;@{}()$^!~`\\?\\\\\\[\\]].*")) {
-            currentToken = currentLine.substring(currentCol, currentCol + 1);
-            currentCol += 1;
             shiftedSymbol = 1;
-            return true;
+            return updateAfterTokenization();
         }
-        //
+        // - Start reading identifier
+        if (currentLine.substring(currentCol).matches("^[a-zA-Z_].*")) {
+            shiftedSymbol = 0;
+            while (currentLine.substring(currentCol, currentCol + shiftedSymbol + 1).matches("^[a-zA-Z0-9_]+")) {
+                shiftedSymbol++;
+                if (currentCol + shiftedSymbol >= currentLine.length()) {
+                    break;
+                }
+            }
+            return updateAfterTokenization();
+        }
+        // - start reading integer or float
+        if (currentLine.substring(currentCol).matches("^[0-9].*")) {
+            // Simple integer
+            shiftedSymbol = 0;
+            while (currentLine.substring(currentCol, currentCol + shiftedSymbol + 1).matches("^[0-9]+")) {
+                shiftedSymbol++;
+                if (currentCol + shiftedSymbol >= currentLine.length()) {
+                    break;
+                }
+            }
+            return updateAfterTokenization();
+        }
         return false;
+    }
+
+    private boolean updateAfterTokenization() {
+        currentToken = currentLine.substring(currentCol, currentCol + shiftedSymbol);
+        currentCol += shiftedSymbol;
+        return true;
     }
 
     public void close() throws IOException {

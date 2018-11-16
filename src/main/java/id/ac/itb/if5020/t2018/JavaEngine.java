@@ -9,8 +9,7 @@ import java.text.ParseException;
 import java.util.logging.Logger;
 
 import id.ac.itb.if5020.t2018.components.BNFRule;
-import id.ac.itb.if5020.t2018.components.specialrules.JavaLetter;
-import id.ac.itb.if5020.t2018.components.specialrules.JavaLetterOrDigit;
+import id.ac.itb.if5020.t2018.components.specialrules.*;
 import id.ac.itb.if5020.t2018.helpers.TextFileParserInterface;
 
 /**
@@ -194,11 +193,7 @@ public class JavaEngine {
 
         BNFRule.add("QualifiedIdentifier", rightCreator("<Identifier> {. <Identifier>}"));
         BNFRule.add("QualifiedIdentifierList", rightCreator("<QualifiedIdentifier> {, <QualifiedIdentifier>}"));
-        BNFRule.add("Identifier", rightCreator("<JavaLetterOrUnderscore> {<JavaLetterOrDigitOrUnderscore>}"));
-        BNFRule.add("JavaLetterOrUnderscore", rightCreator("_", "<JavaLetter>"));
-        BNFRule.add("JavaLetterOrDigitOrUnderscore", rightCreator("_", "<JavaLetterOrDigit>"));
-        BNFRule.add("JavaLetter", new JavaLetter());
-        BNFRule.add("JavaLetterOrDigit", new JavaLetterOrDigit());
+        BNFRule.add("Identifier", new Identifier());
     }
 
     public static void prepareFirstList() {
@@ -246,8 +241,7 @@ public class JavaEngine {
         BNFRule.addFirst("TypeDeclarationModifierWithAnnotation", rightCreator("@", "public", "private", "protected", "final",
                 "static", "abstract", "native", "synchronized", "transient", "volatile", "strictfp"));
 
-        BNFRule.addFirst("JavaLetterOrUnderscore", rightCreator("_"));
-        BNFRule.addFirst("JavaLetterOrDigitOrUnderscore", rightCreator("_"));
+        BNFRule.addFirst("Identifier", new Identifier());
     }
 
     public static String[] rightCreator(String... right) {
