@@ -46,7 +46,7 @@ public class BNFRule {
 
     public void parse() throws ParseException {
         if (specialSymbol != null) {
-            specialSymbol.match();
+            specialSymbol.match(this);
         } else {
             List<List<SpecialRuleOrString>> firstlist = firsts.get(left);
             int i = 0;
@@ -57,7 +57,7 @@ public class BNFRule {
                     boolean rsb = false;
                     for(SpecialRuleOrString rs : firstlist.get(i)) {
                         if (rs.match(marker.token)) {
-                            rule.parse();
+                            rule.parse(this);
                             rsb = true;
                             break;
                         }
@@ -67,7 +67,7 @@ public class BNFRule {
                     }
                 } else {
                     try {
-                        rule.parse();
+                        rule.parse(this);
                         break;
                     } catch (RuleNotMatchException e) {
                         Marker currentMarker = JavaEngine.parser.getMarker();
@@ -84,7 +84,7 @@ public class BNFRule {
             }
 
             if (i == rules.size()) {
-                throw new RuleNotMatchException("Token is not match with rule " + left);
+                throw new RuleNotMatchException("Token is not match with rule " + left, this);
             }
         }
     }

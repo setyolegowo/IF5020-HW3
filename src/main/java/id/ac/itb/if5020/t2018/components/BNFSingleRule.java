@@ -35,9 +35,9 @@ public class BNFSingleRule {
         return _tokenRule;
     }
 
-    public void parse() throws ParseException {
+    public void parse(BNFRule currentRule) throws ParseException {
         for (BNFSymbol symbol : tokenRule) {
-            symbol.match();
+            symbol.match(currentRule);
         }
     }
 }

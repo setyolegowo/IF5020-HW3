@@ -23,19 +23,27 @@ public class RuleTokenizationTest {
         tokenization = new RuleTokenization("[terminalsymbol <NonTerminal>] {<NonTerminal>}");
         Assert.assertEquals("test tokenize", tokenization.readNextToken(), "[terminalsymbol <NonTerminal>]");
         Assert.assertEquals("test tokenize", tokenization.readNextToken(), "{<NonTerminal>}");
+        Assert.assertEquals("finish", tokenization.hasNext(), false);
 
         tokenization = new RuleTokenization("{terminalsymbol <NonTerminal>} {<NonTerminal>}");
         Assert.assertEquals("test tokenize", tokenization.readNextToken(), "{terminalsymbol <NonTerminal>}");
         Assert.assertEquals("test tokenize", tokenization.readNextToken(), "{<NonTerminal>}");
+        Assert.assertEquals("finish", tokenization.hasNext(), false);
 
         tokenization = new RuleTokenization("terminalsymbol <NonTerminal> [<NonTerminal> terminal]");
         Assert.assertEquals("test tokenize", tokenization.readNextToken(), "terminalsymbol");
         Assert.assertEquals("test tokenize", tokenization.readNextToken(), "<NonTerminal>");
         Assert.assertEquals("test tokenize", tokenization.readNextToken(), "[<NonTerminal> terminal]");
+        Assert.assertEquals("finish", tokenization.hasNext(), false);
 
         tokenization = new RuleTokenization("\\{ \\}");
         Assert.assertEquals("test tokenize", tokenization.readNextToken(), "\\{");
         Assert.assertEquals("test tokenize", tokenization.readNextToken(), "\\}");
+        Assert.assertEquals("finish", tokenization.hasNext(), false);
+
+        tokenization = new RuleTokenization("\\[]");
+        Assert.assertEquals("test tokenize", tokenization.readNextToken(), "\\[]");
+        Assert.assertEquals("finish", tokenization.hasNext(), false);
     }
 
     @Test(expected = ParseException.class)

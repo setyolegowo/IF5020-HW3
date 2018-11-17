@@ -10,8 +10,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import id.ac.itb.if5020.t2018.components.BNFRule;
-import id.ac.itb.if5020.t2018.components.specialrules.*;
-import id.ac.itb.if5020.t2018.helpers.Marker;
+import id.ac.itb.if5020.t2018.components.RuleNotMatchException;
+import id.ac.itb.if5020.t2018.components.specialrules.Identifier;
 import id.ac.itb.if5020.t2018.helpers.TextFileParser;
 
 public class TestParsingRule {
@@ -97,8 +97,6 @@ public class TestParsingRule {
 
     @Test
     public void testParsing4() throws IOException, ParseException {
-        BNFRule.add("Program", JavaEngine.rightCreator("[<PackageDeclaration>]"));
-
         // PACKAGEDECLARATION
         BNFRule.add("PackageDeclaration", JavaEngine.rightCreator("{<Annotation>} package <QualifiedIdentifier> ;"));
 
@@ -122,27 +120,31 @@ public class TestParsingRule {
 
         BNFRule.addFirst("Identifier", new Identifier());
 
-        JavaEngine.parser = new TextFileParser(new BufferedReader(new StringReader("@SuchAnnotation package id.ac._itb.if5020.t2018;")));
-        parse("Program");
+        JavaEngine.parser = new TextFileParser(new BufferedReader(new StringReader("@ SuchAnnotation package id.ac._itb.if5020.t2018;")));
+        parse("PackageDeclaration");
+
+        JavaEngine.parser = new TextFileParser(new BufferedReader(new StringReader("@ package id.ac._itb.if5020.t2018;")));
+        parseErrorExpected("PackageDeclaration", "Terminal 'package' expected");
     }
 
     private void parse(String startSymbol) throws IOException, ParseException {
-        JavaEngine.parser.readNextToken();
-        BNFRule.get(startSymbol).parse();
-        if (!JavaEngine.parser.isEndOfFile()) {
-            printError();
+        try {
+            JavaEngine.parser.readNextToken();
+            BNFRule.get(startSymbol).parse();
+        } catch (RuleNotMatchException e) {
+            Assert.fail("No exception should no be thrown");
         }
         Assert.assertTrue("Parsing should be until end of file", JavaEngine.parser.isEndOfFile());
     }
 
-    private void printError() {
-        Marker mark = JavaEngine.parser.getLatestError();
-        System.err.println("Parsing failed in line " + mark.lineNumber);
-        System.err.println();
-        System.err.println(JavaEngine.parser.getCurrentLineString());
-        for (int i = 0; i < mark.colNumber - mark.shiftNumber; i++) {
-            System.err.print(' ');
+    private void parseErrorExpected(String startSymbol, String exceptionMessageExpected) throws IOException, ParseException {
+        try {
+            JavaEngine.parser.readNextToken();
+            BNFRule.get(startSymbol).parse();
+            Assert.assertFalse("Parsing should be not achieved to end of file", JavaEngine.parser.isEndOfFile());
+        } catch (RuleNotMatchException e) {
+            JavaEngine.parser.markError(e);
+            Assert.assertEquals(e.getMessage(), exceptionMessageExpected);
         }
-        System.err.println('^');
     }
 }

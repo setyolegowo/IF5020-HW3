@@ -6,6 +6,6 @@ import java.text.ParseException;
  * SpecialRule
  */
 public interface SpecialRule {
-    public void match() throws ParseException;
+    public void match(BNFRule currentRule) throws ParseException;
     public boolean matching(char _char);
 }

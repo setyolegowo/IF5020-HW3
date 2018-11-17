@@ -3,6 +3,8 @@ package id.ac.itb.if5020.t2018.helpers;
 import java.io.IOException;
 import java.text.ParseException;
 
+import id.ac.itb.if5020.t2018.components.RuleNotMatchException;
+
 public interface TextFileParserInterface {
     public void reset() throws IOException;
     public String getCurrentToken() throws ParseException;
@@ -15,6 +17,8 @@ public interface TextFileParserInterface {
     public Marker getMarker();
     public void resetToMarker(Marker marker);
     public boolean isEndOfFile();
+    public void markError(RuleNotMatchException _exception);
     public void markError();
+    public RuleNotMatchException getLastRuleException();
     public Marker getLatestError();
 }

@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import id.ac.itb.if5020.t2018.JavaEngine;
+import id.ac.itb.if5020.t2018.components.BNFRule;
 import id.ac.itb.if5020.t2018.components.BNFSymbol;
 import id.ac.itb.if5020.t2018.components.RuleNotMatchException;
 import id.ac.itb.if5020.t2018.helpers.Marker;
@@ -49,7 +50,7 @@ public class RepetitionSymbol extends BNFSymbol {
     }
 
     @Override
-    public void match() throws ParseException {
+    public void match(BNFRule currentRule) throws ParseException {
         boolean traceback = false;
         Marker marker = null;
 
@@ -58,12 +59,12 @@ public class RepetitionSymbol extends BNFSymbol {
                 traceback = false;
                 marker = JavaEngine.parser.getMarker();
                 for (BNFSymbol symbol : rules) {
-                    symbol.match();
+                    symbol.match(currentRule);
                     traceback = true;
                 }
             }
         } catch (RuleNotMatchException e) {
-            JavaEngine.parser.markError();
+            JavaEngine.parser.markError(e);
             if (traceback) {
                 JavaEngine.parser.resetToMarker(marker);
             }

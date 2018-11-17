@@ -25,7 +25,7 @@ public abstract class BNFSymbol {
         symbol = _symbol;
     }
 
-    abstract public void match() throws ParseException;
+    abstract public void match(BNFRule currentRule) throws ParseException;
 
     public static BNFSymbol create(String symbol) throws ParseException {
         switch (symbol.charAt(0)) {

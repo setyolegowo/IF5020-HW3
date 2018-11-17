@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import id.ac.itb.if5020.t2018.JavaEngine;
+import id.ac.itb.if5020.t2018.components.BNFRule;
 import id.ac.itb.if5020.t2018.components.BNFSymbol;
 import id.ac.itb.if5020.t2018.components.RuleNotMatchException;
 import id.ac.itb.if5020.t2018.helpers.Marker;
@@ -49,17 +50,17 @@ public class OptionalSymbol extends BNFSymbol {
     }
 
     @Override
-    public void match() throws ParseException {
+    public void match(BNFRule currentRule) throws ParseException {
         boolean traceback = false;
         Marker mark = JavaEngine.parser.getMarker();
 
         try {
             for (BNFSymbol symbol : rules) {
-                symbol.match();
+                symbol.match(currentRule);
                 traceback = true;
             }
         } catch (RuleNotMatchException e) {
-            JavaEngine.parser.markError();
+            JavaEngine.parser.markError(e);
             if (traceback) {
                 JavaEngine.parser.resetToMarker(mark);
             }

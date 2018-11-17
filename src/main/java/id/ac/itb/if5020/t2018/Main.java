@@ -83,5 +83,10 @@ final public class Main {
             System.err.print(' ');
         }
         System.err.println('^');
+        System.err.println();
+        if (JavaEngine.parser.getLastRuleException() != null) {
+            System.err.println("Latest error message: " + JavaEngine.parser.getLastRuleException().getMessage());
+            System.err.println("Latest error rule: " + JavaEngine.parser.getLastRuleException().rule.left);
+        }
     }
 }

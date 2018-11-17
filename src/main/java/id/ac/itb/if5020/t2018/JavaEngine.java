@@ -9,6 +9,7 @@ import java.text.ParseException;
 import java.util.logging.Logger;
 
 import id.ac.itb.if5020.t2018.components.BNFRule;
+import id.ac.itb.if5020.t2018.components.RuleNotMatchException;
 import id.ac.itb.if5020.t2018.components.specialrules.*;
 import id.ac.itb.if5020.t2018.helpers.TextFileParserInterface;
 
@@ -254,8 +255,15 @@ public class JavaEngine {
                 "abstract", "native", "synchronized", "transient", "volatile", "strictfp"));
         BNFRule.addFirst("ClassBodyDeclaration", rightCreator("{"));
         BNFRule.addFirst("ClassBodyDeclaration", rightCreator("static"));
-        BNFRule.addFirst("ClassBodyDeclaration", rightCreator("void"), new Identifier());
         BNFRule.addFirst("ClassBodyDeclarationStaticPrefix", rightCreator("{"));
+        BNFRule.addFirst("ClassBodyDeclarationStaticPrefix", rightCreator("public", "private", "protected", "final",
+                "abstract", "native", "synchronized", "transient", "volatile", "strictfp"));
+
+        BNFRule.addFirst("MemberDeclaration", rightCreator("class", "enum", "interface", "@interface"));
+        BNFRule.addFirst("MemberDeclaration", rightCreator("void"));
+        BNFRule.addFirst("MemberDeclaration", rightCreator("boolean", "byte", "char", "double", "float", "int", "long", "short"));
+        BNFRule.addFirst("MemberDeclaration", rightCreator("<"));
+        BNFRule.addFirst("MemberDeclaration", new Identifier());
 
         BNFRule.addFirst("TypeArguments", rightCreator("<"));
         BNFRule.addFirst("TypeArgument", rightCreator("?"));
@@ -287,6 +295,11 @@ public class JavaEngine {
     public static void runProgram() throws ParseException {
         JavaEngine.parser.readNextToken();
         BNFRule rule = BNFRule.get("Program");
-        rule.parse();
+
+        try {
+            rule.parse();
+        } catch (RuleNotMatchException e) {
+            JavaEngine.parser.markError(e);
+        }
     }
 }

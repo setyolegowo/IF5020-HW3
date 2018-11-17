@@ -29,7 +29,7 @@ public class NonTerminalSymbol extends BNFSymbol {
     }
 
     @Override
-    public void match() throws ParseException {
+    public void match(BNFRule currentRule) throws ParseException {
         BNFRule rule = BNFRule.get(ruleName);
         if (rule == null) {
             throw new ParseException("Rule " + ruleName + " not found.", JavaEngine.parser.getCurrentCol());

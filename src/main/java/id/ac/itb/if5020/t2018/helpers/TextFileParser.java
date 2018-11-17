@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.text.ParseException;
 
 import id.ac.itb.if5020.t2018.JavaEngine;
+import id.ac.itb.if5020.t2018.components.RuleNotMatchException;
 
 public class TextFileParser implements TextFileParserInterface {
 
@@ -302,7 +303,19 @@ public class TextFileParser implements TextFileParserInterface {
         currentToken = String.valueOf(marker.token);
     }
 
+    private RuleNotMatchException errorException;
+
     private Marker errorMarker;
+
+    @Override
+    public void markError(RuleNotMatchException _exception) {
+        errorException = _exception;
+        if (errorMarker != null) {
+            errorMarker = null;
+        }
+
+        errorMarker = new Marker(lineNumber, currentCol, shiftedSymbol, currentToken, currentTokenIndex);
+    }
 
     @Override
     public void markError() {
@@ -311,6 +324,11 @@ public class TextFileParser implements TextFileParserInterface {
         }
 
         errorMarker = new Marker(lineNumber, currentCol, shiftedSymbol, currentToken, currentTokenIndex);
+    }
+
+    @Override
+    public RuleNotMatchException getLastRuleException() {
+        return errorException;
     }
 
     @Override
