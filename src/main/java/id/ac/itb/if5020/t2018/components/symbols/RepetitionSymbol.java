@@ -65,8 +65,13 @@ public class RepetitionSymbol extends BNFSymbol {
             }
         } catch (RuleNotMatchException e) {
             JavaEngine.parser.markError(e);
-            if (traceback) {
-                JavaEngine.parser.resetToMarker(marker);
+            Marker currentMarker = JavaEngine.parser.getMarker();
+            if (currentMarker.hashCode() != marker.hashCode()) {
+                if (traceback) {
+                    JavaEngine.parser.resetToMarker(marker);
+                } else {
+                    throw e;
+                }
             }
         }
     }

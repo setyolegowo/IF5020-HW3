@@ -27,4 +27,9 @@ public class JavaLetter extends NonTerminalSymbol implements SpecialRule {
     public boolean matching(char _char) {
         return String.valueOf(_char).matches("^[a-zA-Z]$");
     }
+
+    @Override
+    public String getRuleName() {
+        return symbol;
+    }
 }

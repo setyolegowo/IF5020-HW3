@@ -61,8 +61,13 @@ public class OptionalSymbol extends BNFSymbol {
             }
         } catch (RuleNotMatchException e) {
             JavaEngine.parser.markError(e);
-            if (traceback) {
-                JavaEngine.parser.resetToMarker(mark);
+            Marker currentMarker = JavaEngine.parser.getMarker();
+            if (currentMarker.hashCode() != mark.hashCode()) {
+                if (traceback) {
+                    JavaEngine.parser.resetToMarker(mark);
+                } else {
+                    throw e;
+                }
             }
         }
     }

@@ -3,8 +3,8 @@ package id.ac.itb.if5020.t2018.helpers;
 import id.ac.itb.if5020.t2018.components.SpecialRule;
 
 public class SpecialRuleOrString {
-    private final String _string;
-    private final SpecialRule rule;
+    public final String _string;
+    public final SpecialRule rule;
 
     public SpecialRuleOrString(String string) {
         _string = string;
@@ -20,6 +20,10 @@ public class SpecialRuleOrString {
         if (rule == null) {
             throw new RuntimeException("rule cannot be null");
         }
+    }
+
+    public boolean isString() {
+        return _string != null;
     }
 
     public boolean match(String arg) {

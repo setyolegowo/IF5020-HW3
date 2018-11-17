@@ -84,7 +84,20 @@ public class BNFRule {
             }
 
             if (i == rules.size()) {
-                throw new RuleNotMatchException("Token is not match with rule " + left, this);
+                String error = "Token is not match with rule " + left;
+                if (rules.size() == firstlist.size()) {
+                    error += ". Expected ";
+                    for (List<SpecialRuleOrString> _rule : firstlist) {
+                        for (SpecialRuleOrString var : _rule) {
+                            if (var.isString()) {
+                                error += "'" + var._string + "', ";
+                            } else {
+                                error += var.rule.getRuleName() + ", ";
+                            }
+                        }
+                    }
+                }
+                throw new RuleNotMatchException(error, this);
             }
         }
     }

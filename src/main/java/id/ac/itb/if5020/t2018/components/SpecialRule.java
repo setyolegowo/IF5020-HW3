@@ -8,4 +8,5 @@ import java.text.ParseException;
 public interface SpecialRule {
     public void match(BNFRule currentRule) throws ParseException;
     public boolean matching(char _char);
+    public String getRuleName();
 }
