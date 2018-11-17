@@ -23,7 +23,55 @@ public class TestParsingRule {
         JavaEngine.parser = null;
         BNFRule.clear();
     }
-
+	
+	@Test
+	public void testLiteral() throws IOException, ParseException {
+		BNFRule.add("Literal", new Literal());
+		BNFRule.addFirst("Literal", new Literal());
+		
+		JavaEngine.parser = new TextFileParser(new BufferedReader(new StringReader("0")));
+        parse("Literal");
+		
+		JavaEngine.parser = new TextFileParser(new BufferedReader(new StringReader("2")));
+        parse("Literal");
+		
+		JavaEngine.parser = new TextFileParser(new BufferedReader(new StringReader("1996")));
+        parse("Literal");
+		
+		JavaEngine.parser = new TextFileParser(new BufferedReader(new StringReader("19_96")));
+        parse("Literal");
+		
+		JavaEngine.parser = new TextFileParser(new BufferedReader(new StringReader("0xDadaCafe")));
+        parse("Literal");
+		
+		JavaEngine.parser = new TextFileParser(new BufferedReader(new StringReader("0x00_FF__00_FF")));
+        parse("Literal");
+		
+		JavaEngine.parser = new TextFileParser(new BufferedReader(new StringReader("0372")));
+        parse("Literal");
+		
+		JavaEngine.parser = new TextFileParser(new BufferedReader(new StringReader("0177_7777_7777")));
+        parse("Literal");
+		
+		JavaEngine.parser = new TextFileParser(new BufferedReader(new StringReader("0b0111_1111_1111_1111_1111_1111_1111_1111")));
+        parse("Literal");
+		
+		JavaEngine.parser = new TextFileParser(new BufferedReader(new StringReader("0l")));
+        parse("Literal");
+		
+		JavaEngine.parser = new TextFileParser(new BufferedReader(new StringReader("0777L")));
+        parse("Literal");
+		
+		JavaEngine.parser = new TextFileParser(new BufferedReader(new StringReader("0x100000000L")));
+        parse("Literal");
+		
+		JavaEngine.parser = new TextFileParser(new BufferedReader(new StringReader("2_147_483_648L")));
+        parse("Literal");
+		
+		JavaEngine.parser = new TextFileParser(new BufferedReader(new StringReader("0xC0B0L")));
+        parse("Literal");
+	}
+	
     @Test
     public void testParsingIdentifier() throws IOException, ParseException {
         BNFRule.add("Identifier", new Identifier());

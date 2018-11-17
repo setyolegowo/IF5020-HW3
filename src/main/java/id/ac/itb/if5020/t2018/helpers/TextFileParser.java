@@ -235,14 +235,62 @@ public class TextFileParser implements TextFileParserInterface {
         }
         // - start reading integer or float
         if (currentLine.substring(currentCol).matches("^[0-9].*")) {
-            // Simple integer
             shiftedSymbol = 0;
-            while (currentLine.substring(currentCol, currentCol + shiftedSymbol + 1).matches("^[0-9]+")) {
-                shiftedSymbol++;
-                if (currentCol + shiftedSymbol >= currentLine.length()) {
-                    break;
-                }
+			
+			// Decimal Integer Zero Without Suffix
+			if (currentLine.substring(currentCol).matches("^0[^0-9xXbBlL]*")) {
+				shiftedSymbol = 1;
             }
+			
+			// Decimal Integer Zero With Suffix
+			if (currentLine.substring(currentCol).matches("^0[lL][^0-9xXbB]*")) {
+				shiftedSymbol = 2;
+            }
+			
+			// Decimal Integer Non Zero
+			if (currentLine.substring(currentCol).matches("^[1-9].*")) {
+				shiftedSymbol = 0;
+				while (currentLine.substring(currentCol, currentCol + shiftedSymbol + 1).matches("^[1-9][0-9_lL]*")) {
+					shiftedSymbol++;
+					if (currentCol + shiftedSymbol >= currentLine.length()) {
+						break;
+					}
+				}
+            }
+			
+			// Hex Integer
+			if (currentLine.substring(currentCol).matches("^0[xX].*")) {
+				shiftedSymbol = 1;
+				while (currentLine.substring(currentCol, currentCol + shiftedSymbol + 1).matches("^0[x|X][0-9A-Fa-f_lL]*")) {
+					shiftedSymbol++;
+					if (currentCol + shiftedSymbol >= currentLine.length()) {
+						break;
+					}
+				}
+            }
+			
+			// Octal Integer
+			if (currentLine.substring(currentCol).matches("^0[0-7].*")) {
+				shiftedSymbol = 1;
+				while (currentLine.substring(currentCol, currentCol + shiftedSymbol + 1).matches("^0[0-7][0-7_lL]*")) {
+					shiftedSymbol++;
+					if (currentCol + shiftedSymbol >= currentLine.length()) {
+						break;
+					}
+				}
+            }
+			
+			// Binary Integer
+			if (currentLine.substring(currentCol).matches("^0[bB].*")) {
+				shiftedSymbol = 1;
+				while (currentLine.substring(currentCol, currentCol + shiftedSymbol + 1).matches("^0[b|B][01_]*")) {
+					shiftedSymbol++;
+					if (currentCol + shiftedSymbol >= currentLine.length()) {
+						break;
+					}
+				}
+            }
+			
             return updateAfterTokenization();
         }
         return false;
