@@ -306,10 +306,11 @@ public class TextFileParser implements TextFileParserInterface {
             return updateAfterTokenization();
 		}
 
-		// handle <, <<, <=, and <<=
+		// handle <, <<, <=, <<=, and <>
 		if (currentLine.substring(currentCol).matches("^<.*")) {
             if (currentLine.substring(currentCol).matches("^<{2}[^<].*")
-				|| currentLine.substring(currentCol).matches("^<=[^<=].*")) {
+				|| currentLine.substring(currentCol).matches("^<=[^<=].*")
+				|| currentLine.substring(currentCol).matches("^<>[^<>].*")) {
                 shiftedSymbol = 2;
                 return updateAfterTokenization();
             }
@@ -341,7 +342,7 @@ public class TextFileParser implements TextFileParserInterface {
             return updateAfterTokenization();
         }
 
-        if (currentLine.substring(currentCol).matches("^[,;:{}()$^!~`\\?\\\\\\[\\]].*")) {
+        if (currentLine.substring(currentCol).matches("^[,;:{}()$~`\\?\\\\\\[\\]].*")) {
             shiftedSymbol = 1;
             return updateAfterTokenization();
         }

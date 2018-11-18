@@ -522,6 +522,8 @@ public class JavaEngine {
 		BNFRule.addFirst("BlockStatement", rightCreator("boolean", "byte", "char", "double", "float", "int", "long", "short", "final", "@"), new Identifier());
 		BNFRule.addFirst("LocalVariableDeclarationStatement", rightCreator("final", "@"));
 		BNFRule.addFirst("LocalVariableDeclarationStatement", rightCreator("boolean", "byte", "char", "double", "float", "int", "long", "short"), new Identifier());
+		BNFRule.addFirst("VariableInitializer", rightCreator("["));
+		BNFRule.addFirst("VariableInitializer", rightCreator("++", "--", "!", "~", "+", "-", "(", "this", "super", "new", "<", "boolean", "byte", "char", "double", "float", "int", "long", "short", "void"), new Identifier(), new Literal());
 		BNFRule.addFirst("Statement", rightCreator("{"));
 		BNFRule.addFirst("Statement", rightCreator(";"));
 		BNFRule.addFirst("Statement", rightCreator("if"));
@@ -536,6 +538,7 @@ public class JavaEngine {
 		BNFRule.addFirst("Statement", rightCreator("throw"));
 		BNFRule.addFirst("Statement", rightCreator("synchronized"));
 		BNFRule.addFirst("Statement", rightCreator("try"));
+		BNFRule.addFirst("Statement", rightCreator("++", "--", "!", "~", "+", "-", "(", "this", "super", "new", "<", "boolean", "byte", "char", "double", "float", "int", "long", "short", "void"), new Identifier(), new Literal());
 		BNFRule.addFirst("SwitchBlockStatementGroup", rightCreator("case", "default"));
 		BNFRule.addFirst("SwitchLabel", rightCreator("case"));
 		BNFRule.addFirst("SwitchLabel", rightCreator("default"));
@@ -565,7 +568,7 @@ public class JavaEngine {
 		BNFRule.addFirst("Resource", new Identifier());
 
 		// Expression
-		BNFRule.addFirst("Expression", rightCreator("++", "--", "!", "~", "+", "-", "("), new Literal());
+		BNFRule.addFirst("Expression", rightCreator("++", "--", "!", "~", "+", "-", "(", "this", "super", "new", "<", "boolean", "byte", "char", "double", "float", "int", "long", "short", "void"), new Identifier(), new Literal());
 		BNFRule.addFirst("AssignmentOperator", rightCreator("="));
 		BNFRule.addFirst("AssignmentOperator", rightCreator("+="));
 		BNFRule.addFirst("AssignmentOperator", rightCreator("-="));
@@ -580,7 +583,7 @@ public class JavaEngine {
 		BNFRule.addFirst("AssignmentOperator", rightCreator(">>>="));
 		BNFRule.addFirst("ExpressionA", rightCreator("++", "--", "!", "~", "+", "-", "("), new Literal());
 		BNFRule.addFirst("ExpressionARest", rightCreator("?"));
-		BNFRule.addFirst("ExpressionB", rightCreator("++", "--", "!", "~", "+", "-", "("), new Literal());
+		BNFRule.addFirst("ExpressionB", rightCreator("++", "--", "!", "~", "+", "-", "(", "this", "super", "new", "<", "boolean", "byte", "char", "double", "float", "int", "long", "short", "void"), new Identifier(), new Literal());
 		BNFRule.addFirst("ExpressionBRest", rightCreator("||", "&&", "|", "^", "&", "==", "!=", "<", ">", "<=", ">=", "<<", ">>", ">>>", "+", "-", "*", "/", "%"));
 		BNFRule.addFirst("ExpressionBRest", rightCreator("instanceof"));
 		BNFRule.addFirst("InfixOp", rightCreator("||"));
@@ -604,7 +607,9 @@ public class JavaEngine {
 		BNFRule.addFirst("InfixOp", rightCreator("%"));
 		BNFRule.addFirst("ExpressionC", rightCreator("++", "--", "!", "~", "+", "-"));
 		BNFRule.addFirst("ExpressionC", rightCreator("("));
-		BNFRule.addFirst("ExpressionC", new Literal());
+		BNFRule.addFirst("ExpressionC", rightCreator("this", "super", "new", "<", "boolean", "byte", "char", "double", "float", "int", "long", "short", "void"), new Identifier(), new Literal());
+		BNFRule.addFirst("ExpressionCRest", rightCreator("boolean", "byte", "char", "double", "float", "int", "long", "short"), new Identifier());
+		BNFRule.addFirst("ExpressionCRest", rightCreator("++", "--", "!", "~", "+", "-", "("), new Literal());
 		BNFRule.addFirst("PrefixOp", rightCreator("++"));
 		BNFRule.addFirst("PrefixOp", rightCreator("--"));
 		BNFRule.addFirst("PrefixOp", rightCreator("!"));
@@ -613,8 +618,55 @@ public class JavaEngine {
 		BNFRule.addFirst("PrefixOp", rightCreator("-"));
 		BNFRule.addFirst("PostfixOp", rightCreator("++"));
 		BNFRule.addFirst("PostfixOp", rightCreator("--"));
-
+		BNFRule.addFirst("Primary", rightCreator("this"));
+		BNFRule.addFirst("Primary", rightCreator("super"));
+		BNFRule.addFirst("Primary", rightCreator("new"));
+		BNFRule.addFirst("Primary", rightCreator("<"));
+		BNFRule.addFirst("Primary", rightCreator("boolean", "byte", "char", "double", "float", "int", "long", "short"));
+		BNFRule.addFirst("Primary", rightCreator("void"));
+		BNFRule.addFirst("Primary", new Identifier());
 		BNFRule.addFirst("Primary", new Literal());
+		BNFRule.addFirst("PrimaryB", rightCreator("super"), new Identifier());
+		BNFRule.addFirst("PrimaryB", rightCreator("this"));
+		BNFRule.addFirst("Literal", new Literal());
+		BNFRule.addFirst("Arguments", rightCreator("("));
+		BNFRule.addFirst("ArgumentsA", rightCreator("++", "--", "!", "~", "+", "-", "(", "this", "super", "new", "<", "boolean", "byte", "char", "double", "float", "int", "long", "short", "void"), new Identifier(), new Literal());
+		BNFRule.addFirst("SuperSuffix", rightCreator("("));
+		BNFRule.addFirst("SuperSuffix", rightCreator("."));
+		BNFRule.addFirst("ExplicitGenericInvocationSuffix", rightCreator("super"));
+		BNFRule.addFirst("ExplicitGenericInvocationSuffix", new Identifier());
+		BNFRule.addFirst("Creator", rightCreator("<"));
+		BNFRule.addFirst("Creator", new Identifier());
+		BNFRule.addFirst("CreatorA", rightCreator("("));
+		BNFRule.addFirst("CreatorA", rightCreator("["));
+		BNFRule.addFirst("CreatedName", new Identifier());
+		BNFRule.addFirst("ClassCreatorRest", rightCreator("("));
+		BNFRule.addFirst("ClassBody", rightCreator("{"));
+		BNFRule.addFirst("ArrayCreatorRest", rightCreator("["));
+		BNFRule.addFirst("ArrayCreatorRestA", rightCreator("]"));
+		BNFRule.addFirst("ArrayCreatorRestA", rightCreator("++", "--", "!", "~", "+", "-", "(", "this", "super", "new", "<", "boolean", "byte", "char", "double", "float", "int", "long", "short", "void"), new Identifier(), new Literal());
+		BNFRule.addFirst("IdentifierSuffix", rightCreator("["));
+		BNFRule.addFirst("IdentifierSuffix", rightCreator("("));
+		BNFRule.addFirst("IdentifierSuffix", rightCreator("."));
+		BNFRule.addFirst("IdentifierSuffixA", rightCreator("[]"));
+		BNFRule.addFirst("IdentifierSuffixA", rightCreator("."));
+		BNFRule.addFirst("IdentifierSuffixA", rightCreator("++", "--", "!", "~", "+", "-", "(", "this", "super", "new", "<", "boolean", "byte", "char", "double", "float", "int", "long", "short", "void"), new Identifier(), new Literal());
+		BNFRule.addFirst("IdentifierSuffixB", rightCreator("class"));
+		BNFRule.addFirst("IdentifierSuffixB", rightCreator("<"));
+		BNFRule.addFirst("IdentifierSuffixB", rightCreator("this"));
+		BNFRule.addFirst("IdentifierSuffixB", rightCreator("super"));
+		BNFRule.addFirst("IdentifierSuffixB", rightCreator("new"));
+		BNFRule.addFirst("ExplicitGenericInvocation", rightCreator("<"));
+		BNFRule.addFirst("InnerCreator", new Identifier());
+		BNFRule.addFirst("Selector", rightCreator("."));
+		BNFRule.addFirst("Selector", rightCreator("["));
+		BNFRule.addFirst("SelectorA", rightCreator("<"));
+		BNFRule.addFirst("SelectorA", rightCreator("this"));
+		BNFRule.addFirst("SelectorA", rightCreator("super"));
+		BNFRule.addFirst("SelectorA", rightCreator("new"));
+		BNFRule.addFirst("NonWildcardTypeArguments", rightCreator("<"));
+		BNFRule.addFirst("TypeArgumentsOrDiamond", rightCreator("<>"));
+		BNFRule.addFirst("TypeArgumentsOrDiamond", rightCreator("<"));
     }
 
 	private static void prepareRuleBlock() throws ParseException {
@@ -624,6 +676,8 @@ public class JavaEngine {
 			"<LocalVariableDeclarationStatement>"));
 		BNFRule.add("LocalVariableDeclarationStatement", rightCreator("<VariableModifier> {<VariableModifier>} <Type> <VariableDeclarator> {, <VariableDeclarator>} ;",
 			"<Type> <VariableDeclarator> {, <VariableDeclarator>} ;"));
+		BNFRule.add("VariableInitializer", rightCreator("<ArrayInitializer>",
+			"<Expression>"));
 		BNFRule.add("Statement", rightCreator("<Block>",
 			";",
 			"if ( <Expression> ) <Statement> [else <Statement>]",
@@ -637,7 +691,8 @@ public class JavaEngine {
 			"return [<Expression>] ;",
 			"throw <Expression> ;",
 			"synchronized ( <Expression> ) <Block>",
-			"try <TryStatementRest>"));
+			"try <TryStatementRest>",
+			"<Expression> ;"));
 		BNFRule.add("SwitchBlockStatementGroup", rightCreator("<SwitchLabel> {<SwitchLabel>} {<BlockStatement>}"));
 		BNFRule.add("SwitchLabel", rightCreator("case <SwitchLabelCase> :",
 			"default :"));
@@ -677,11 +732,58 @@ public class JavaEngine {
 			"instanceof <Type>"));
 		BNFRule.add("InfixOp", rightCreator("||", "&&", "|", "^", "&", "==", "!=", "\\<", "\\>", "\\<=", "\\>=", "\\<<", "\\>>", "\\>>>", "+", "-", "*", "/", "%"));
 		BNFRule.add("ExpressionC", rightCreator("<PrefixOp> <ExpressionC>",
-			"( <Type> ) <ExpressionC>",
-			"<Primary>"));
+			"( <ExpressionCRest> ) <ExpressionC>",
+			"<Primary> {<Selector>} {<PostfixOp>}"));
+		BNFRule.add("ExpressionCRest", rightCreator("<Type> ) <ExpressionC>", "<Expression> )"));
 		BNFRule.add("PrefixOp", rightCreator("++", "--", "!", "~", "+", "-"));
 		BNFRule.add("PostfixOp", rightCreator("++", "--"));
-		BNFRule.add("Primary", new Literal());
+		BNFRule.add("Primary", rightCreator("this [<Arguments>]",
+			"super <SuperSuffix>",
+			"new <Creator>",
+			"<NonWildcardTypeArguments> ( <PrimaryB> )",
+			"<BasicType> {\\[]} . class",
+			"void . class",
+			"<Identifier> {. <Identifier>} [<IdentifierSuffix>]",
+			"<Literal>"));
+		BNFRule.add("PrimaryB", rightCreator("<ExplicitGenericInvocationSuffix>",
+			"this <Arguments>"));
+		BNFRule.add("Literal", new Literal());
+		BNFRule.add("Arguments", rightCreator("( [<ArgumentsA>] )"));
+		BNFRule.add("ArgumentsA", rightCreator("<Expression> {, <Expression>}"));
+		BNFRule.add("SuperSuffix", rightCreator("<Arguments>",
+			". <Identifier> [<Arguments>]"));
+		BNFRule.add("ExplicitGenericInvocationSuffix", rightCreator("super <SuperSuffix>",
+			"<Identifier> <Arguments>"));
+		BNFRule.add("Creator", rightCreator("<NonWildcardTypeArguments> <CreatedName> <ClassCreatorRest>", "<CreatedName> <CreatorA>"));
+		BNFRule.add("CreatorA", rightCreator("<ClassCreatorRest>",
+			"<ArrayCreatorRest>"));
+		BNFRule.add("CreatedName", rightCreator("<Identifier> [<TypeArgumentsOrDiamond>] {. <Identifier> [<TypeArgumentsOrDiamond>]}"));
+		BNFRule.add("ClassCreatorRest", rightCreator("<Arguments> [<ClassBody>]"));
+		BNFRule.add("ClassBody", rightCreator("\\{ {<ClassBodyDeclaration>} \\}"));
+		BNFRule.add("ArrayCreatorRest", rightCreator("\\[ <ArrayCreatorRestA>"));
+		BNFRule.add("ArrayCreatorRestA", rightCreator("\\] {\\[]} <ArrayInitializer>",
+			"<Expression> \\] {\\[ <Expression> \\]} {\\[]}"));
+		BNFRule.add("IdentifierSuffix", rightCreator("\\[ <IdentifierSuffixA> \\]",
+			"<Arguments>",
+			". <IdentifierSuffixB>"));
+		BNFRule.add("IdentifierSuffixA", rightCreator("\\[] {\\[]} . class",
+			". class",
+			"<Expression>"));
+		BNFRule.add("IdentifierSuffixB", rightCreator("class",
+			"<ExplicitGenericInvocation>",
+			"this",
+			"super <Arguments>",
+			"new [<NonWildcardTypeArguments>] <InnerCreator>"));
+		BNFRule.add("ExplicitGenericInvocation", rightCreator("<NonWildcardTypeArguments> <ExplicitGenericInvocationSuffix>"));
+		BNFRule.add("InnerCreator", rightCreator("<Identifier> [NonWildcardTypeArgumentsOrDiamond] <ClassCreatorRest>"));
+		BNFRule.add("Selector", rightCreator(". <SelectorA>",
+			"\\[ <Expression> \\]"));
+		BNFRule.add("SelectorA", rightCreator("<ExplicitGenericInvocation>",
+			"this",
+			"super <SuperSuffix>",
+			"new [<NonWildcardTypeArguments>] <InnerCreator>"));
+		BNFRule.add("NonWildcardTypeArguments", rightCreator("\\< <TypeList> \\>"));
+		BNFRule.add("TypeArgumentsOrDiamond", rightCreator("\\<>", "<TypeArguments>"));
 	}
 
     public static String[] rightCreator(String... right) {
