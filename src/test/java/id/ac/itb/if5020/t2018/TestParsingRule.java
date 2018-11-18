@@ -316,7 +316,7 @@ public class TestParsingRule {
         parse("ClassBodyDeclaration");
 
         JavaEngine.parser = new TextStringParser("private Identity MyFunction {");
-        parseErrorExpected("ClassBodyDeclaration", "Token is not match with rule MethodOrFieldRest. Expected '(', '=', '[]', ';', ");
+        parseErrorExpected("ClassBodyDeclaration", "Token is not match with rule MethodOrFieldRest. Expected '(', '=', '[]', ',', ';', ");
 
         JavaEngine.parser = new TextStringParser("protected Identity MyFunction(@Ann byte myvar);");
         parse("ClassBodyDeclaration");
@@ -353,6 +353,8 @@ public class TestParsingRule {
         JavaEngine.parser = new TextStringParser("final String example4 = \"4\", example5;");
         parse("ClassBodyDeclaration");
         JavaEngine.parser = new TextStringParser("String example6, example7 = \"7\";");
+        parse("ClassBodyDeclaration");
+        JavaEngine.parser = new TextStringParser("MyClass example8 = new MyClass();");
         parse("ClassBodyDeclaration");
         JavaEngine.parser = new TextStringParser("@P1Annotation\nprotected abstract void myFunction();");
         parse("ClassBodyDeclaration");

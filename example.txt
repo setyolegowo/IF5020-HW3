@@ -19,10 +19,14 @@ public abstract class ClassName {
 
     String example6, example7 = "7";
 
+    MyClass example8 = new MyClass();
+
     @P1Annotation
     protected abstract void myFunction();
 
-    private void myFunction() {}
+    private void myFunctionExtend(final Integer myInt, String... theExtend);
+
+    private void myFunction2() {}
 
     public CLassName() {}
 }
