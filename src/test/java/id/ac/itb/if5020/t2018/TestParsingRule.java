@@ -321,6 +321,12 @@ public class TestParsingRule {
         JavaEngine.parser = new TextStringParser("protected Identity MyFunction(@Ann byte myvar);");
         parse("ClassBodyDeclaration");
 
+        JavaEngine.parser = new TextStringParser("protected Identity MyFunction(byte myvar, String... wow);");
+        parse("ClassBodyDeclaration");
+
+        JavaEngine.parser = new TextStringParser("protected Identity MyFunction(byte myvar, String... wow, String... wew);");
+        parseErrorExpected("ClassBodyDeclaration", "Terminal ')' expected");
+
         JavaEngine.parser = new TextStringParser("void MyFunction();");
         parse("ClassBodyDeclaration");
 
@@ -328,6 +334,31 @@ public class TestParsingRule {
         parse("ClassBodyDeclaration");
 
         JavaEngine.parser = new TextStringParser("static {}");
+        parse("ClassBodyDeclaration");
+    }
+
+    @Test
+    public void testActualRule2() throws IOException, ParseException {
+        JavaEngine.prepareRules();
+        JavaEngine.prepareFirstList();
+
+        JavaEngine.parser = new TextStringParser("static final public Integer MyIntegerConstant = 1;");
+        parse("ClassBodyDeclaration");
+        JavaEngine.parser = new TextStringParser("public String example1;");
+        parse("ClassBodyDeclaration");
+        JavaEngine.parser = new TextStringParser("private String example2 = \"AAAA\";");
+        parse("ClassBodyDeclaration");
+        JavaEngine.parser = new TextStringParser("protected String[] example3 = {\"AAA\", \"BBB\"};");
+        parse("ClassBodyDeclaration");
+        JavaEngine.parser = new TextStringParser("final String example4 = \"4\", example5;");
+        parse("ClassBodyDeclaration");
+        JavaEngine.parser = new TextStringParser("String example6, example7 = \"7\";");
+        parse("ClassBodyDeclaration");
+        JavaEngine.parser = new TextStringParser("@P1Annotation\nprotected abstract void myFunction();");
+        parse("ClassBodyDeclaration");
+        JavaEngine.parser = new TextStringParser("private void myFunction() {}");
+        parse("ClassBodyDeclaration");
+        JavaEngine.parser = new TextStringParser("public CLassName() {}");
         parse("ClassBodyDeclaration");
     }
 

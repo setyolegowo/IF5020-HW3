@@ -132,6 +132,7 @@ public class JavaEngine {
             rightCreator(
                 "<MethodDeclaratorRest>",
                 "<VariableDeclaratorRest> {, <VariableDeclarator>} ;",
+                ", <VariableDeclarator> {, <VariableDeclarator>} ;",
                 ";"
             )
         );
@@ -271,9 +272,12 @@ public class JavaEngine {
 
         // EXPRESSION
         BNFRule.add("VariableModifier", rightCreator("final", "<Annotation>"));
+        BNFRule.add("VariableDeclarators", rightCreator("<VariableDeclarator> {, <VariableDeclarator>}"));
         BNFRule.add("VariableDeclaratorId", rightCreator("<Identifier> {\\[ \\]}"));
         BNFRule.add("VariableDeclarator", rightCreator("<Identifier> [<VariableDeclaratorRest>]"));
         BNFRule.add("VariableDeclaratorRest", rightCreator("\\[] {\\[]} [= <VariableInitializer>]", "= <VariableInitializer>"));
+        BNFRule.add("VariableInitializer", rightCreator("<ArrayInitializer>", "<Expression>"));
+        BNFRule.add("ArrayInitializer", rightCreator("\\{ [<VariableInitializer> {, <VariableInitializer>}] \\}"));
 
         // TOKEN
         BNFRule.add("ReferenceType", rightCreator("<Identifier> [<ReferenceTypeRest>]"));
@@ -371,6 +375,7 @@ public class JavaEngine {
         BNFRule.addFirst("MethodDeclaratorRest", rightCreator("("));
         BNFRule.addFirst("MethodOrFieldRest", rightCreator("("));
         BNFRule.addFirst("MethodOrFieldRest", rightCreator("=", "[]"));
+        BNFRule.addFirst("MethodOrFieldRest", rightCreator(","));
         BNFRule.addFirst("MethodOrFieldRest", rightCreator(";"));
 
         BNFRule.addFirst("MemberDeclarationRest", rightCreator("<"));
@@ -467,10 +472,14 @@ public class JavaEngine {
         BNFRule.addFirst("VariableModifier", rightCreator("final"));
         BNFRule.addFirst("VariableModifier", rightCreator("@"));
 
+        BNFRule.addFirst("VariableDeclarators", new Identifier());
         BNFRule.addFirst("VariableDeclaratorId", new Identifier());
         BNFRule.addFirst("VariableDeclarator", new Identifier());
         BNFRule.addFirst("VariableDeclaratorRest", rightCreator("[]"));
         BNFRule.addFirst("VariableDeclaratorRest", rightCreator("="));
+        BNFRule.addFirst("VariableInitializer", rightCreator("{"));
+        BNFRule.addFirst("VariableInitializer", rightCreator("++", "--", "!", "~", "+", "-", "("), new Literal());
+        BNFRule.addFirst("ArrayInitializer", rightCreator("{"));
 
         BNFRule.addFirst("Modifier", rightCreator("@"));
         BNFRule.addFirst("Modifier", rightCreator("public", "private", "protected", "final",

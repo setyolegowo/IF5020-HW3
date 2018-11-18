@@ -1,4 +1,4 @@
-@SuchAnnotation package id.ac._itb.if5020.t2018;
+@SuchAnnotation package id.ac._itb.if_5020.t2018;
 
 import java.text.ParseException;
 import static java.text.PARSE;
@@ -6,6 +6,23 @@ import java.text.ParseException.*;
 import static java.text.ParseException.*;
 
 @Annotation
-public static class ClassName {
+public abstract class ClassName {
+    static final public Integer MyIntegerConstant = 1;
 
+    public String example1;
+
+    private String example2 = "AAAA";
+
+    protected String[] example3 = {"AAA", "BBB"};
+
+    final String example4 = "4", example5;
+
+    String example6, example7 = "7";
+
+    @P1Annotation
+    protected abstract void myFunction();
+
+    private void myFunction() {}
+
+    public CLassName() {}
 }

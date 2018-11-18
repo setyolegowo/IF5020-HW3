@@ -159,7 +159,7 @@ public class TextFileParser implements TextFileParserInterface {
             return updateAfterTokenization();
         }
         if (currentLine.substring(currentCol).matches("^\\..*")) {
-            if (currentLine.substring(currentCol).matches("^\\.{3}[^\\.]*")) {
+            if (currentLine.substring(currentCol).matches("^\\.{3}[^\\.].*")) {
                 shiftedSymbol = 3;
                 return updateAfterTokenization();
             } else if (currentLine.substring(currentCol).matches("^\\.[0-9]+(_[0-9]+)*([eE][+-]?[0-9_]+)?[fFdD]?.*")) {
@@ -182,7 +182,7 @@ public class TextFileParser implements TextFileParserInterface {
         }
 
         if (currentLine.substring(currentCol).matches("^@.*")) {
-            if (currentLine.substring(currentCol).matches("^@interface.*")) {
+            if (currentLine.substring(currentCol).matches("^@interface[^a-zA-Z0-9].*")) {
                 shiftedSymbol = 10;
                 return updateAfterTokenization();
             }
