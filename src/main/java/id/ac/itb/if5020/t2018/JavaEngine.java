@@ -554,19 +554,54 @@ public class JavaEngine {
 		BNFRule.addFirst("Resource", new Identifier());
 		
 		// Expression
-		BNFRule.addFirst("Expression", rightCreator("!", "("), new NumberLiteral());
+		BNFRule.addFirst("Expression", rightCreator("++", "--", "!", "~", "+", "-", "("), new NumberLiteral());
 		BNFRule.addFirst("AssignmentOperator", rightCreator("="));
-		BNFRule.addFirst("ExpressionA", rightCreator("!", "("), new NumberLiteral());
+		BNFRule.addFirst("AssignmentOperator", rightCreator("+="));
+		BNFRule.addFirst("AssignmentOperator", rightCreator("-="));
+		BNFRule.addFirst("AssignmentOperator", rightCreator("*="));
+		BNFRule.addFirst("AssignmentOperator", rightCreator("/="));
+		BNFRule.addFirst("AssignmentOperator", rightCreator("&="));
+		BNFRule.addFirst("AssignmentOperator", rightCreator("|="));
+		BNFRule.addFirst("AssignmentOperator", rightCreator("^="));
+		BNFRule.addFirst("AssignmentOperator", rightCreator("%="));
+		BNFRule.addFirst("AssignmentOperator", rightCreator("<<="));
+		BNFRule.addFirst("AssignmentOperator", rightCreator(">>="));
+		BNFRule.addFirst("AssignmentOperator", rightCreator(">>>="));
+		BNFRule.addFirst("ExpressionA", rightCreator("++", "--", "!", "~", "+", "-", "("), new NumberLiteral());
 		BNFRule.addFirst("ExpressionARest", rightCreator("?"));
-		BNFRule.addFirst("ExpressionB", rightCreator("!", "("), new NumberLiteral());
-		BNFRule.addFirst("ExpressionBRest", rightCreator("+"));
+		BNFRule.addFirst("ExpressionB", rightCreator("++", "--", "!", "~", "+", "-", "("), new NumberLiteral());
+		BNFRule.addFirst("ExpressionBRest", rightCreator("||", "&&", "|", "^", "&", "==", "!=", "<", ">", "<=", ">=", "<<", ">>", ">>>", "+", "-", "*", "/", "%"));
 		BNFRule.addFirst("ExpressionBRest", rightCreator("instanceof"));
+		BNFRule.addFirst("InfixOp", rightCreator("||"));
+		BNFRule.addFirst("InfixOp", rightCreator("&&"));
+		BNFRule.addFirst("InfixOp", rightCreator("|"));
+		BNFRule.addFirst("InfixOp", rightCreator("^"));
+		BNFRule.addFirst("InfixOp", rightCreator("&"));
+		BNFRule.addFirst("InfixOp", rightCreator("=="));
+		BNFRule.addFirst("InfixOp", rightCreator("!="));
+		BNFRule.addFirst("InfixOp", rightCreator("<"));
+		BNFRule.addFirst("InfixOp", rightCreator(">"));
+		BNFRule.addFirst("InfixOp", rightCreator("<="));
+		BNFRule.addFirst("InfixOp", rightCreator(">="));
+		BNFRule.addFirst("InfixOp", rightCreator("<<"));
+		BNFRule.addFirst("InfixOp", rightCreator(">>"));
+		BNFRule.addFirst("InfixOp", rightCreator(">>>"));
 		BNFRule.addFirst("InfixOp", rightCreator("+"));
-		BNFRule.addFirst("ExpressionC", rightCreator("!"));
+		BNFRule.addFirst("InfixOp", rightCreator("-"));
+		BNFRule.addFirst("InfixOp", rightCreator("*"));
+		BNFRule.addFirst("InfixOp", rightCreator("/"));
+		BNFRule.addFirst("InfixOp", rightCreator("%"));
+		BNFRule.addFirst("ExpressionC", rightCreator("++", "--", "!", "~", "+", "-"));
 		BNFRule.addFirst("ExpressionC", rightCreator("("));
 		BNFRule.addFirst("ExpressionC", new NumberLiteral());
+		BNFRule.addFirst("PrefixOp", rightCreator("++"));
+		BNFRule.addFirst("PrefixOp", rightCreator("--"));
 		BNFRule.addFirst("PrefixOp", rightCreator("!"));
+		BNFRule.addFirst("PrefixOp", rightCreator("~"));
+		BNFRule.addFirst("PrefixOp", rightCreator("+"));
+		BNFRule.addFirst("PrefixOp", rightCreator("-"));
 		BNFRule.addFirst("PostfixOp", rightCreator("++"));
+		BNFRule.addFirst("PostfixOp", rightCreator("--"));
 		
 		BNFRule.add("Primary", new NumberLiteral());
     }
@@ -623,19 +658,18 @@ public class JavaEngine {
 	
 	private static void prepareRuleExpression() throws ParseException {
 		BNFRule.add("Expression", rightCreator("<ExpressionA> [<AssignmentOperator> <ExpressionA>]"));
-		BNFRule.add("AssignmentOperator", rightCreator("="));
+		BNFRule.add("AssignmentOperator", rightCreator("=", "+=", "-=", "*=", "/=", "&=", "|=", "^=", "%=", "\\<<=", "\\>>=", "\\>>>="));
 		BNFRule.add("ExpressionA", rightCreator("<ExpressionB> [<ExpressionARest>]"));
 		BNFRule.add("ExpressionARest", rightCreator("? <Expression> : <ExpressionA>"));
 		BNFRule.add("ExpressionB", rightCreator("<ExpressionC> [<ExpressionBRest>]"));
 		BNFRule.add("ExpressionBRest", rightCreator("<InfixOp> <ExpressionC> {<InfixOp> <ExpressionC>}",
 			"instanceof <Type>"));
-		BNFRule.add("InfixOp", rightCreator("+"));
+		BNFRule.add("InfixOp", rightCreator("||", "&&", "|", "^", "&", "==", "!=", "\\<", "\\>", "\\<=", "\\>=", "\\<<", "\\>>", "\\>>>", "+", "-", "*", "/", "%"));
 		BNFRule.add("ExpressionC", rightCreator("<PrefixOp> <ExpressionC>",
 			"( <Type> ) <ExpressionC>",
 			"<Primary>"));
-		BNFRule.add("PrefixOp", rightCreator("!"));
-		BNFRule.add("PostfixOp", rightCreator("++"));
-		
+		BNFRule.add("PrefixOp", rightCreator("++", "--", "!", "~", "+", "-"));
+		BNFRule.add("PostfixOp", rightCreator("++", "--"));
 		BNFRule.add("Primary", new NumberLiteral());
 	}
 

@@ -146,43 +146,12 @@ public class TextFileParser implements TextFileParserInterface {
         // - Start reading single line comment
         // - Start reading terminal with symbol count more than 1
         if (currentLine.substring(currentCol).matches("^=.*")) {
-            if (currentLine.substring(currentCol).matches("^={2}[^=]*")) {
+            if (currentLine.substring(currentCol).matches("^={2}[^=].*")) {
                 shiftedSymbol = 2;
                 return updateAfterTokenization();
             }
-            if (currentLine.substring(currentCol).matches("^={3}[^=]*")) {
+            if (currentLine.substring(currentCol).matches("^={3}[^=].*")) {
                 shiftedSymbol = 3;
-                return updateAfterTokenization();
-            }
-
-            shiftedSymbol = 1;
-            return updateAfterTokenization();
-        }
-        if (currentLine.substring(currentCol).matches("^<.*")) {
-            if (currentLine.substring(currentCol).matches("^<{3}[^<]*")) {
-                shiftedSymbol = 3;
-                return updateAfterTokenization();
-            }
-            if (currentLine.substring(currentCol).matches("^<=[^<=]*")) {
-                shiftedSymbol = 2;
-                return updateAfterTokenization();
-            }
-
-            shiftedSymbol = 1;
-            return updateAfterTokenization();
-        }
-        if (currentLine.substring(currentCol).matches("^&.*")) {
-            if (currentLine.substring(currentCol).matches("^&{2}[^&]*")) {
-                shiftedSymbol = 2;
-                return updateAfterTokenization();
-            }
-
-            shiftedSymbol = 1;
-            return updateAfterTokenization();
-        }
-        if (currentLine.substring(currentCol).matches("^>.*")) {
-            if (currentLine.substring(currentCol).matches("^>=[^>=]*")) {
-                shiftedSymbol = 2;
                 return updateAfterTokenization();
             }
 
@@ -212,14 +181,7 @@ public class TextFileParser implements TextFileParserInterface {
             shiftedSymbol = 2;
             return updateAfterTokenization();
         }
-        if (currentLine.substring(currentCol).matches("^\\+.*")) {
-            if (currentLine.substring(currentCol).matches("^\\+\\+[^\\+]*")) {
-                shiftedSymbol = 3;
-                return updateAfterTokenization();
-            }
-            shiftedSymbol = 1;
-            return updateAfterTokenization();
-        }
+        
         if (currentLine.substring(currentCol).matches("^@.*")) {
             if (currentLine.substring(currentCol).matches("^@interface.*")) {
                 shiftedSymbol = 10;
@@ -228,7 +190,137 @@ public class TextFileParser implements TextFileParserInterface {
             shiftedSymbol = 1;
             return updateAfterTokenization();
         }
-        if (currentLine.substring(currentCol).matches("^[\\*,;:{}()$^!~`\\?\\\\\\[\\]].*")) {
+		
+		// handle &, &&, and &=
+		if (currentLine.substring(currentCol).matches("^&.*")) {
+            if (currentLine.substring(currentCol).matches("^&{2}[^&].*")
+				|| currentLine.substring(currentCol).matches("^&=[^&=].*")) {
+                shiftedSymbol = 2;
+                return updateAfterTokenization();
+            }
+            shiftedSymbol = 1;
+            return updateAfterTokenization();
+        }
+		
+		// handle |, ||, |=
+		if (currentLine.substring(currentCol).matches("^\\|.*")) {
+			if (currentLine.substring(currentCol).matches("^\\|{2}[^\\|].*")
+				|| currentLine.substring(currentCol).matches("^\\|=[^\\|=].*")) {
+                shiftedSymbol = 2;
+                return updateAfterTokenization();
+            }
+            shiftedSymbol = 1;
+            return updateAfterTokenization();
+		}
+		
+		// handle ! and !=
+		if (currentLine.substring(currentCol).matches("^!.*")) {
+			if (currentLine.substring(currentCol).matches("^!=[^!=].*")) {
+                shiftedSymbol = 2;
+                return updateAfterTokenization();
+            }
+            shiftedSymbol = 1;
+            return updateAfterTokenization();
+		}
+		
+		// handle +, ++, and +=
+		if (currentLine.substring(currentCol).matches("^\\+.*")) {
+            if (currentLine.substring(currentCol).matches("^\\+{2}[^\\+].*")
+				|| currentLine.substring(currentCol).matches("^\\+=[^\\+=].*")) {
+                shiftedSymbol = 2;
+                return updateAfterTokenization();
+            }
+            shiftedSymbol = 1;
+            return updateAfterTokenization();
+        }
+		
+		// handle -, --, and -=
+		if (currentLine.substring(currentCol).matches("^\\-.*")) {
+			if (currentLine.substring(currentCol).matches("^\\-{2}[^\\-].*")
+				|| currentLine.substring(currentCol).matches("^\\-=[^\\-=].*")) {
+                shiftedSymbol = 2;
+                return updateAfterTokenization();
+            }
+            shiftedSymbol = 1;
+            return updateAfterTokenization();
+		}
+		
+		// handle *, and *=
+		if (currentLine.substring(currentCol).matches("^\\*.*")) {
+			if (currentLine.substring(currentCol).matches("^\\*=[^\\*=].*")) {
+                shiftedSymbol = 2;
+                return updateAfterTokenization();
+            }
+            shiftedSymbol = 1;
+            return updateAfterTokenization();
+		}
+		
+		// handle /, and /=
+		if (currentLine.substring(currentCol).matches("^/.*")) {
+			if (currentLine.substring(currentCol).matches("^/=[^/=].*")) {
+                shiftedSymbol = 2;
+                return updateAfterTokenization();
+            }
+            shiftedSymbol = 1;
+            return updateAfterTokenization();
+		}
+		
+		// handle ^, and ^=
+		if (currentLine.substring(currentCol).matches("^\\^.*")) {
+			if (currentLine.substring(currentCol).matches("^\\^=[^\\^=].*")) {
+                shiftedSymbol = 2;
+                return updateAfterTokenization();
+            }
+            shiftedSymbol = 1;
+            return updateAfterTokenization();
+		}
+		
+		// handle %, and %=
+		if (currentLine.substring(currentCol).matches("^%.*")) {
+			if (currentLine.substring(currentCol).matches("^%=[^%=].*")) {
+                shiftedSymbol = 2;
+                return updateAfterTokenization();
+            }
+            shiftedSymbol = 1;
+            return updateAfterTokenization();
+		}
+		
+		// handle <, <<, <=, and <<=
+		if (currentLine.substring(currentCol).matches("^<.*")) {
+            if (currentLine.substring(currentCol).matches("^<{2}[^<].*")
+				|| currentLine.substring(currentCol).matches("^<=[^<=].*")) {
+                shiftedSymbol = 2;
+                return updateAfterTokenization();
+            }
+			if (currentLine.substring(currentCol).matches("^<{2}=[^<=].*")) {
+                shiftedSymbol = 3;
+                return updateAfterTokenization();
+            }
+            shiftedSymbol = 1;
+            return updateAfterTokenization();
+        }
+		
+		// handle >, >>, >>>, >=, >>=, and >>>=
+		if (currentLine.substring(currentCol).matches("^>.*")) {
+            if (currentLine.substring(currentCol).matches("^>=[^>=].*")
+				|| currentLine.substring(currentCol).matches("^>{2}[^>].*")) {
+                shiftedSymbol = 2;
+                return updateAfterTokenization();
+            }
+			if (currentLine.substring(currentCol).matches("^>{3}[^>].*")
+				|| currentLine.substring(currentCol).matches("^>{2}=[^>=].*")) {
+                shiftedSymbol = 3;
+                return updateAfterTokenization();
+            }
+			if (currentLine.substring(currentCol).matches("^>{3}=[^>=].*")) {
+                shiftedSymbol = 4;
+                return updateAfterTokenization();
+            }
+            shiftedSymbol = 1;
+            return updateAfterTokenization();
+        }
+		
+        if (currentLine.substring(currentCol).matches("^[,;:{}()$^!~`\\?\\\\\\[\\]].*")) {
             shiftedSymbol = 1;
             return updateAfterTokenization();
         }
