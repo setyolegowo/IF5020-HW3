@@ -32,6 +32,8 @@ public class JavaEngine {
         prepareRuleInterface();
         prepareRuleAnnotationType();
         prepareRuleCommon();
+		prepareRuleBlock();
+		prepareRuleExpression();
     }
 
     private static void prepareRuleProgram() throws ParseException {
@@ -269,7 +271,7 @@ public class JavaEngine {
         // EXPRESSION
         BNFRule.add("VariableModifier", rightCreator("final", "<Annotation>"));
         BNFRule.add("VariableDeclaratorId", rightCreator("<Identifier> {\\[ \\]}"));
-        BNFRule.add("VariableDeclarator", rightCreator("<Identifier> <VariableDeclaratorRest>"));
+        BNFRule.add("VariableDeclarator", rightCreator("<Identifier> [<VariableDeclaratorRest>]"));
         BNFRule.add("VariableDeclaratorRest", rightCreator("{\\[]} [= <VariableInitializer>]"));
 
         // TOKEN
@@ -436,7 +438,14 @@ public class JavaEngine {
         BNFRule.addFirst("TypeParameters", rightCreator("<"));
 
         BNFRule.addFirst("Type", rightCreator("byte", "short", "char", "int", "long", "float", "double", "boolean"));
-        BNFRule.addFirst("BasicType", rightCreator("byte", "short", "char", "int", "long", "float", "double", "boolean"));
+        BNFRule.addFirst("BasicType", rightCreator("byte"));
+		BNFRule.addFirst("BasicType", rightCreator("short"));
+		BNFRule.addFirst("BasicType", rightCreator("char"));
+		BNFRule.addFirst("BasicType", rightCreator("int"));
+		BNFRule.addFirst("BasicType", rightCreator("long"));
+		BNFRule.addFirst("BasicType", rightCreator("float"));
+		BNFRule.addFirst("BasicType", rightCreator("double"));
+		BNFRule.addFirst("BasicType", rightCreator("boolean"));
 
         BNFRule.addFirst("ExtendsOrSuper", rightCreator("extends"));
         BNFRule.addFirst("ExtendsOrSuper", rightCreator("super"));
@@ -494,7 +503,141 @@ public class JavaEngine {
 
         BNFRule.addFirst("QualifiedIdentigier", new Identifier());
         BNFRule.addFirst("Identifier", new Identifier());
+		
+		// Block
+		BNFRule.addFirst("Block", rightCreator("{"));
+		BNFRule.addFirst("BlockStatement", rightCreator("class", "enum"));
+		BNFRule.addFirst("BlockStatement", rightCreator("{", ";", "if", "assert", "switch", "while", "do", "for", "break", "continue", "return", "throw", "synchronized", "try"));
+		BNFRule.addFirst("BlockStatement", rightCreator("boolean", "byte", "char", "double", "float", "int", "long", "short", "final", "@"), new Identifier());
+		BNFRule.addFirst("LocalVariableDeclarationStatement", rightCreator("final", "@"));
+		BNFRule.addFirst("LocalVariableDeclarationStatement", rightCreator("boolean", "byte", "char", "double", "float", "int", "long", "short"), new Identifier());
+		BNFRule.addFirst("Statement", rightCreator("{"));
+		BNFRule.addFirst("Statement", rightCreator(";"));
+		BNFRule.addFirst("Statement", rightCreator("if"));
+		BNFRule.addFirst("Statement", rightCreator("assert"));
+		BNFRule.addFirst("Statement", rightCreator("switch"));
+		BNFRule.addFirst("Statement", rightCreator("while"));
+		BNFRule.addFirst("Statement", rightCreator("do"));
+		BNFRule.addFirst("Statement", rightCreator("for"));
+		BNFRule.addFirst("Statement", rightCreator("break"));
+		BNFRule.addFirst("Statement", rightCreator("continue"));
+		BNFRule.addFirst("Statement", rightCreator("return"));
+		BNFRule.addFirst("Statement", rightCreator("throw"));
+		BNFRule.addFirst("Statement", rightCreator("synchronized"));
+		BNFRule.addFirst("Statement", rightCreator("try"));
+		BNFRule.addFirst("SwitchBlockStatementGroup", rightCreator("case", "default"));
+		BNFRule.addFirst("SwitchLabel", rightCreator("case"));
+		BNFRule.addFirst("SwitchLabel", rightCreator("default"));
+		BNFRule.addFirst("SwitchLabelCase", rightCreator("expression"));
+		BNFRule.addFirst("SwitchLabelCase", new Identifier());
+		BNFRule.addFirst("ForControl", rightCreator("expression"));
+		BNFRule.addFirst("ForControl", rightCreator("boolean", "byte", "char", "double", "float", "int", "long", "short", "final", "@"), new Identifier());
+		BNFRule.addFirst("ForVarControl", rightCreator("final", "@"));
+		BNFRule.addFirst("ForVarControl", rightCreator("boolean", "byte", "char", "double", "float", "int", "long", "short"), new Identifier());
+		BNFRule.addFirst("ForVarControlRest", rightCreator(";"));
+		BNFRule.addFirst("ForVarControlRest", rightCreator("=", ","));
+		BNFRule.addFirst("ForVarControlRest", rightCreator(":"));
+		BNFRule.addFirst("ForVariableDeclaratorsRest", rightCreator("="));
+		BNFRule.addFirst("ForVariableDeclaratorsRest", rightCreator(","));
+		BNFRule.addFirst("ForInit", rightCreator("expression"));
+		BNFRule.addFirst("ForUpdate", rightCreator("expression"));
+		BNFRule.addFirst("TryStatementRest", rightCreator("{"));
+		BNFRule.addFirst("TryStatementRest", rightCreator("("));
+		BNFRule.addFirst("TryStatementBlockRest", rightCreator("catch"));
+		BNFRule.addFirst("TryStatementBlockRest", rightCreator("finally"));
+		BNFRule.addFirst("CatchClause", rightCreator("catch"));
+		BNFRule.addFirst("CatchType", new Identifier());
+		BNFRule.addFirst("Finally", rightCreator("finally"));
+		BNFRule.addFirst("ResourceSpecification", rightCreator("("));
+		BNFRule.addFirst("Resources", rightCreator("final", "@"), new Identifier());
+		BNFRule.addFirst("Resource", rightCreator("final", "@"));
+		BNFRule.addFirst("Resource", new Identifier());
+		
+		// Expression
+		BNFRule.addFirst("Expression", rightCreator("!", "("), new NumberLiteral());
+		BNFRule.addFirst("AssignmentOperator", rightCreator("="));
+		BNFRule.addFirst("ExpressionA", rightCreator("!", "("), new NumberLiteral());
+		BNFRule.addFirst("ExpressionARest", rightCreator("?"));
+		BNFRule.addFirst("ExpressionB", rightCreator("!", "("), new NumberLiteral());
+		BNFRule.addFirst("ExpressionBRest", rightCreator("+"));
+		BNFRule.addFirst("ExpressionBRest", rightCreator("instanceof"));
+		BNFRule.addFirst("InfixOp", rightCreator("+"));
+		BNFRule.addFirst("ExpressionC", rightCreator("!"));
+		BNFRule.addFirst("ExpressionC", rightCreator("("));
+		BNFRule.addFirst("ExpressionC", new NumberLiteral());
+		BNFRule.addFirst("PrefixOp", rightCreator("!"));
+		BNFRule.addFirst("PostfixOp", rightCreator("++"));
+		
+		BNFRule.add("Primary", new NumberLiteral());
     }
+	
+	private static void prepareRuleBlock() throws ParseException {
+		BNFRule.add("Block", rightCreator("\\{ {<BlockStatement>} \\}"));
+		BNFRule.add("BlockStatement", rightCreator("<ClassOrInterfaceDeclaration>",
+			"<Statement>",
+			"<LocalVariableDeclarationStatement>"));
+		BNFRule.add("LocalVariableDeclarationStatement", rightCreator("<VariableModifier> {<VariableModifier>} <Type> <VariableDeclarator> {, <VariableDeclarator>} ;",
+			"<Type> <VariableDeclarator> {, <VariableDeclarator>} ;"));
+		BNFRule.add("Statement", rightCreator("<Block>",
+			";",
+			"if ( <Expression> ) <Statement> [else <Statement>]",
+			"assert <Expression> [: <Expression>] ;",
+			"switch ( <Expression> ) \\{ {<SwitchBlockStatementGroup>} \\}",
+			"while ( <Expression> ) <Statement>",
+			"do <Statement> while ( <Expression> ) ;",
+			"for ( <ForControl> ) <Statement>",
+			"break [<Identifier>] ;",
+			"continue [<Identifier>] ;",
+			"return [<Expression>] ;",
+			"throw <Expression> ;",
+			"synchronized ( <Expression> ) <Block>",
+			"try <TryStatementRest>"));
+		BNFRule.add("SwitchBlockStatementGroup", rightCreator("<SwitchLabel> {<SwitchLabel>} {<BlockStatement>}"));
+		BNFRule.add("SwitchLabel", rightCreator("case <SwitchLabelCase> :",
+			"default :"));
+		BNFRule.add("SwitchLabelCase", rightCreator("<Expression>",
+			"<Identifier>"));
+		BNFRule.add("ForControl", rightCreator("<ForInit> ; [<Expression>] ; [<ForUpdate>]",
+			"<ForVarControl>"));
+		BNFRule.add("ForVarControl", rightCreator("<VariableModifier> {<VariableModifier>} <Type> <VariableDeclaratorId> <ForVarControlRest>",
+			"<Type> <VariableDeclaratorId> <ForVarControlRest>"));
+		BNFRule.add("ForVarControlRest", rightCreator("; [<Expression>] ; [<ForUpdate>]",
+			"<ForVariableDeclaratorsRest> ; [<Expression>] ; [<ForUpdate>]",
+			": <Expression>"));
+		BNFRule.add("ForVariableDeclaratorsRest", rightCreator("= <VariableInitializer> {, <VariableDeclarator>}",
+			", <VariableDeclarator> {, <VariableDeclarator>}"));
+		BNFRule.add("ForInit", rightCreator("<Expression> {, <Expression>}"));
+		BNFRule.add("ForUpdate", rightCreator("<Expression> {, <Expression>}"));
+		BNFRule.add("TryStatementRest", rightCreator("<Block> <TryStatementBlockRest>",
+			"<ResourceSpecification> <Block> {<CatchClause>} [<Finally>]"));
+		BNFRule.add("TryStatementBlockRest", rightCreator("<CatchClause> {<CatchClause>} [<Finally>]",
+			"<Finally>"));
+		BNFRule.add("CatchClause", rightCreator("catch ( {<VariableModifier>} <CatchType> <Identifier> ) <Block>"));
+		BNFRule.add("CatchType", rightCreator("<QualifiedIdentifier> {| <QualifiedIdentifier>}"));
+		BNFRule.add("Finally", rightCreator("finally <Block>"));
+		BNFRule.add("ResourceSpecification", rightCreator("( <Resources> [;] )"));
+		BNFRule.add("Resources", rightCreator("<Resource> {; <Resource>}"));
+		BNFRule.add("Resource", rightCreator("<VariableModifier> {<VariableModifier>} <ReferenceType> <VariableDeclaratorId> = <Expression>",
+			"<ReferenceType> <VariableDeclaratorId> = <Expression>"));
+	}
+	
+	private static void prepareRuleExpression() throws ParseException {
+		BNFRule.add("Expression", rightCreator("<ExpressionA> [<AssignmentOperator> <ExpressionA>]"));
+		BNFRule.add("AssignmentOperator", rightCreator("="));
+		BNFRule.add("ExpressionA", rightCreator("<ExpressionB> [<ExpressionARest>]"));
+		BNFRule.add("ExpressionARest", rightCreator("? <Expression> : <ExpressionA>"));
+		BNFRule.add("ExpressionB", rightCreator("<ExpressionC> [<ExpressionBRest>]"));
+		BNFRule.add("ExpressionBRest", rightCreator("<InfixOp> <ExpressionC> {<InfixOp> <ExpressionC>}",
+			"instanceof <Type>"));
+		BNFRule.add("InfixOp", rightCreator("+"));
+		BNFRule.add("ExpressionC", rightCreator("<PrefixOp> <ExpressionC>",
+			"( <Type> ) <ExpressionC>",
+			"<Primary>"));
+		BNFRule.add("PrefixOp", rightCreator("!"));
+		BNFRule.add("PostfixOp", rightCreator("++"));
+		
+		BNFRule.add("Primary", new NumberLiteral());
+	}
 
     public static String[] rightCreator(String... right) {
         return right;

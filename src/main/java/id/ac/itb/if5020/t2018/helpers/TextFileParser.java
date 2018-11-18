@@ -193,7 +193,17 @@ public class TextFileParser implements TextFileParserInterface {
             if (currentLine.substring(currentCol).matches("^\\.{3}[^\\.]*")) {
                 shiftedSymbol = 3;
                 return updateAfterTokenization();
-            }
+            } else if (currentLine.substring(currentCol).matches("^\\.[0-9_]+([eE][+-]?[0-9_]+)?[fFdD]?.*")) {
+				shiftedSymbol = 0;
+				while (currentLine.substring(currentCol, currentCol + shiftedSymbol + 1).matches("^[0-9_\\.eE+-fFdD]+")) {
+					shiftedSymbol++;
+					if (currentCol + shiftedSymbol >= currentLine.length()) {
+						break;
+					}
+				}
+				return updateAfterTokenization();
+			}
+			
 
             shiftedSymbol = 1;
             return updateAfterTokenization();
@@ -218,7 +228,7 @@ public class TextFileParser implements TextFileParserInterface {
             shiftedSymbol = 1;
             return updateAfterTokenization();
         }
-        if (currentLine.substring(currentCol).matches("^[\\*,;{}()$^!~`\\?\\\\\\[\\]].*")) {
+        if (currentLine.substring(currentCol).matches("^[\\*,;:{}()$^!~`\\?\\\\\\[\\]].*")) {
             shiftedSymbol = 1;
             return updateAfterTokenization();
         }
@@ -259,9 +269,9 @@ public class TextFileParser implements TextFileParserInterface {
             }
 			
 			// Hex Integer
-			if (currentLine.substring(currentCol).matches("^0[xX].*")) {
+			if (currentLine.substring(currentCol).matches("^0[xX][^\\.]*")) {
 				shiftedSymbol = 1;
-				while (currentLine.substring(currentCol, currentCol + shiftedSymbol + 1).matches("^0[x|X][0-9A-Fa-f_lL]*")) {
+				while (currentLine.substring(currentCol, currentCol + shiftedSymbol + 1).matches("^0[xX][0-9A-Fa-f_lL]*")) {
 					shiftedSymbol++;
 					if (currentCol + shiftedSymbol >= currentLine.length()) {
 						break;
@@ -283,13 +293,36 @@ public class TextFileParser implements TextFileParserInterface {
 			// Binary Integer
 			if (currentLine.substring(currentCol).matches("^0[bB].*")) {
 				shiftedSymbol = 1;
-				while (currentLine.substring(currentCol, currentCol + shiftedSymbol + 1).matches("^0[b|B][01_]*")) {
+				while (currentLine.substring(currentCol, currentCol + shiftedSymbol + 1).matches("^0[bB][01_lL]*")) {
 					shiftedSymbol++;
 					if (currentCol + shiftedSymbol >= currentLine.length()) {
 						break;
 					}
 				}
             }
+			
+			// Decimal Floating
+			if (currentLine.substring(currentCol).matches("^[0-9_]+\\.[0-9_]*([eE][+-]?[0-9_]+)?[fFdD]?.*")
+				|| currentLine.substring(currentCol).matches("^[0-9_]+[eE][+-]?[0-9_]+[fFdD]?.*")
+				|| currentLine.substring(currentCol).matches("^[0-9_]+[fFdD].*")) {
+				while (currentLine.substring(currentCol, currentCol + shiftedSymbol + 1).matches("^[0-9_\\.eE+-fFdD]+")) {
+					shiftedSymbol++;
+					if (currentCol + shiftedSymbol >= currentLine.length()) {
+						break;
+					}
+				}
+			}
+			
+			// Hex Floating
+			if (currentLine.substring(currentCol).matches("^0[xX][0-9A-Fa-f_]+[\\.]?[pP][+-]?[0-9_]+[fFdD]?.*")
+				|| currentLine.substring(currentCol).matches("^0[xX][0-9A-Fa-f_]*\\.[0-9A-Fa-f_]+[pP][+-]?[0-9_]+[fFdD]?.*")) {
+				while (currentLine.substring(currentCol, currentCol + shiftedSymbol + 1).matches("^[0-9A-Fa-f_\\.pP+-dDxX]+")) {
+					shiftedSymbol++;
+					if (currentCol + shiftedSymbol >= currentLine.length()) {
+						break;
+					}
+				}
+			}
 			
             return updateAfterTokenization();
         }
