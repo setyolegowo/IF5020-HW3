@@ -10,6 +10,7 @@ import org.junit.Test;
 import id.ac.itb.if5020.t2018.components.BNFRule;
 import id.ac.itb.if5020.t2018.components.RuleNotMatchException;
 import id.ac.itb.if5020.t2018.components.specialrules.Identifier;
+import id.ac.itb.if5020.t2018.components.specialrules.Literal;
 import id.ac.itb.if5020.t2018.helpers.TextStringParser;
 
 import static id.ac.itb.if5020.t2018.JavaEngine.rightCreator;
@@ -22,55 +23,55 @@ public class TestParsingRule {
         JavaEngine.parser = null;
         BNFRule.clear();
     }
-	
+
 	@Test
 	public void testLiteral() throws IOException, ParseException {
 		BNFRule.add("Literal", new Literal());
 		BNFRule.addFirst("Literal", new Literal());
-		
-		JavaEngine.parser = new TextFileParser(new BufferedReader(new StringReader("0")));
+
+		JavaEngine.parser = new TextStringParser("0");
         parse("Literal");
-		
-		JavaEngine.parser = new TextFileParser(new BufferedReader(new StringReader("2")));
+
+		JavaEngine.parser = new TextStringParser("2");
         parse("Literal");
-		
-		JavaEngine.parser = new TextFileParser(new BufferedReader(new StringReader("1996")));
+
+		JavaEngine.parser = new TextStringParser("1996");
         parse("Literal");
-		
-		JavaEngine.parser = new TextFileParser(new BufferedReader(new StringReader("19_96")));
+
+		JavaEngine.parser = new TextStringParser("19_96");
         parse("Literal");
-		
-		JavaEngine.parser = new TextFileParser(new BufferedReader(new StringReader("0xDadaCafe")));
+
+		JavaEngine.parser = new TextStringParser("0xDadaCafe");
         parse("Literal");
-		
-		JavaEngine.parser = new TextFileParser(new BufferedReader(new StringReader("0x00_FF__00_FF")));
+
+		JavaEngine.parser = new TextStringParser("0x00_FF__00_FF");
         parse("Literal");
-		
-		JavaEngine.parser = new TextFileParser(new BufferedReader(new StringReader("0372")));
+
+		JavaEngine.parser = new TextStringParser("0372");
         parse("Literal");
-		
-		JavaEngine.parser = new TextFileParser(new BufferedReader(new StringReader("0177_7777_7777")));
+
+		JavaEngine.parser = new TextStringParser("0177_7777_7777");
         parse("Literal");
-		
-		JavaEngine.parser = new TextFileParser(new BufferedReader(new StringReader("0b0111_1111_1111_1111_1111_1111_1111_1111")));
+
+		JavaEngine.parser = new TextStringParser("0b0111_1111_1111_1111_1111_1111_1111_1111");
         parse("Literal");
-		
-		JavaEngine.parser = new TextFileParser(new BufferedReader(new StringReader("0l")));
+
+		JavaEngine.parser = new TextStringParser("0l");
         parse("Literal");
-		
-		JavaEngine.parser = new TextFileParser(new BufferedReader(new StringReader("0777L")));
+
+		JavaEngine.parser = new TextStringParser("0777L");
         parse("Literal");
-		
-		JavaEngine.parser = new TextFileParser(new BufferedReader(new StringReader("0x100000000L")));
+
+		JavaEngine.parser = new TextStringParser("0x100000000L");
         parse("Literal");
-		
-		JavaEngine.parser = new TextFileParser(new BufferedReader(new StringReader("2_147_483_648L")));
+
+		JavaEngine.parser = new TextStringParser("2_147_483_648L");
         parse("Literal");
-		
-		JavaEngine.parser = new TextFileParser(new BufferedReader(new StringReader("0xC0B0L")));
+
+		JavaEngine.parser = new TextStringParser("0xC0B0L");
         parse("Literal");
 	}
-	
+
     @Test
     public void testParsingIdentifier() throws IOException, ParseException {
         BNFRule.add("Identifier", new Identifier());
