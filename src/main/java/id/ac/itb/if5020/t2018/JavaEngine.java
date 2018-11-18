@@ -19,6 +19,8 @@ import id.ac.itb.if5020.t2018.helpers.TextFileParserInterface;
  */
 public class JavaEngine {
 
+    public static boolean throwNonLL1 = false;
+
     public final static Logger LOGGER = Logger.getLogger(JavaEngine.class.getName());
 
     public static TextFileParserInterface parser;
@@ -83,7 +85,7 @@ public class JavaEngine {
             "ClassBodyDeclaration",
             rightCreator(
                 ";",
-                "<ModifierWithoutStatic> {<ModifierWithoutStatic>} <MemberDeclaration>",
+                "<ModifierWithoutStatic> {<ModifierAfterAnnotation>} <MemberDeclaration>",
                 "<Block>",
                 "static <ClassBodyDeclarationStaticPrefix>",
                 "<MemberDeclaration>"
@@ -91,14 +93,18 @@ public class JavaEngine {
         );
         BNFRule.add(
             "ClassBodyDeclarationStaticPrefix",
-            rightCreator("<Block>", "{<ModifierWithoutStatic>} <MemberDeclaration>")
+            rightCreator(
+                "<Block>",
+                "<ModifierAfterAnnotationWithoutStatic> {<ModifierAfterAnnotationWithoutStatic>} <MemberDeclaration>",
+                "<MemberDeclaration>"
+            )
         );
         BNFRule.add(
             "MemberDeclaration",
             rightCreator(
                 "<ClassOrInterfaceDeclaration>",
                 "void <Identifier> <VoidMethodDeclaratorRest>",
-                "<BasicType> {\\[ \\]} <MemberDeclarationRestAfterBasic>",
+                "<BasicType> {\\[]} <MemberDeclarationRestAfterBasic>",
                 "<TypeParameters> <GenericMethodOrConstructorRest>",
                 "<Identifier> <MemberDeclarationRest>"
             )
@@ -116,35 +122,39 @@ public class JavaEngine {
         BNFRule.add(
             "MethodDeclaratorRest",
             rightCreator(
-                "<FormalParameters> {\\[ \\]} [throws <QualifiedIdentifierList>] <BlockOrSemicolon>"
+                "<FormalParameters> {\\[]} [throws <QualifiedIdentifierList>] <BlockOrSemicolon>"
             )
         );
         BNFRule.add(
             "MethodOrFieldRest",
             rightCreator(
                 "<MethodDeclaratorRest>",
-                "<VariableDeclaratorRest> {, <VariableDeclarator>} ;"
+                "<VariableDeclaratorRest> {, <VariableDeclarator>} ;",
+                ";"
             )
         );
         BNFRule.add(
             "MemberDeclarationRest",
             rightCreator(
                 "<TypeParameters> <MethodOrFieldRest>",
-                "<ConstructorDeclaratorRest>"
+                "<ConstructorDeclaratorRest>",
+                "<Identifier> <MethodOrFieldRest>"
             )
         );
         BNFRule.add(
             "GenericMethodOrConstructorRest",
             rightCreator(
                 "void <Identifier> <MethodDeclaratorRest>",
-                "<BasicType> {\\[ \\]} <MethodDeclaratorRest>",
+                "<BasicType> {\\[]} <MethodDeclaratorRest>",
                 "<Identifier> <GenericMethodOrConstructorRestRest>"
             )
         );
         BNFRule.add("GenericMethodOrConstructorRestRest",
             rightCreator(
+                "<ReferenceTypeRest> {\\[]} <Identifier> <MethodDeclaratorRest>",
+                "\\[] {\\[]} <Identifier> <MethodDeclaratorRest>",
                 "<ConstructorDeclaratorRest>",
-                "[<TypeArguments>] {. <Identifier> [TypeArguments]} <Identifier> <MethodDeclaratorRest>" // Generation of ReferenceType of Type
+                "<Identifier> <MethodDeclaratorRest>" // Generation of ReferenceType of Type
             )
         );
         BNFRule.add(
@@ -155,20 +165,89 @@ public class JavaEngine {
 
     private static void prepareRuleEnum() throws ParseException {
         // TYPEDECLARATION ENUM
-        BNFRule.add("EnumDeclaration", rightCreator("enum <Identifier> [implements <TypeList>] <EnumBody>"));
+        BNFRule.add("EnumDeclaration", rightCreator("enum <Identifier> [implements <TypeList>] " +
+                "\\{ [<EnumConstant>] [,] [<EnumBodyDeclarations>] \\}"));
+
+        BNFRule.add("EnumConstants", rightCreator("<EnumConstant> {, <EnumConstant>}"));
+        BNFRule.add("EnumConstant", rightCreator(
+            "<Annotation> <Identifier> [<Arguments>] [\\{ <ClassBodyDeclaration> \\}]",
+            "<Identifier> [Arguments] [\\{ <ClassBodyDeclaration> \\}]"
+        ));
+
+        BNFRule.add("EnumBodyDeclarations", rightCreator("; {<ClassBodyDeclaration>}"));
     }
 
     private static void prepareRuleInterface() throws ParseException {
         // TYPEDECLARATION INTERFACE
         BNFRule.add(
             "NormalInterfaceDeclaration",
-            rightCreator("interface <Identifier> [<TypeParameters>] [extends <TypeList>] <InterfaceBody>")
+            rightCreator("interface <Identifier> [<TypeParameters>] [extends <TypeList>] " +
+                "\\{ {<InterfaceBodyDeclaration>} \\}")
         );
+
+        BNFRule.add(
+            "NormalInterfaceDeclaration",
+            rightCreator(
+                ";",
+                "<Modifier> {<Modifier>} InterfaceMemberDecl",
+                "InterfaceMemberDecl"
+            )
+        );
+        BNFRule.add(
+            "NormalInterfaceDeclaration",
+            rightCreator(
+                "void <Identifier> <VoidInterfaceMethodDeclaratorRest>",
+                "<TypeParameters> <InterfaceGenericMethodDeclRest>",
+                "<ClassDeclaration>",
+                "<InterfaceDeclaration>",
+                "<InterfaceMethodOrFieldDecl>"
+            )
+        );
+        BNFRule.add("InterfaceMethodOrFieldDecl", rightCreator("<Type> <Identifier> <InterfaceMethodOrFieldRest>"));
+        BNFRule.add("InterfaceMethodOrFieldRest", rightCreator(
+            "<ContantDeclaratorRest> {, <ContantDeclaratorRest>}",
+            "<InterfaceMethodDeclaratorRest>"
+        ));
+        BNFRule.add("ConstantDeclaratorRest", rightCreator(
+            "= <VariableInitializer>",
+            "\\[] {\\[]} = <VariableInitializer>"
+        ));
+        BNFRule.add("ConstantDeclarator", rightCreator(
+            "<Identifier> <ConstantDeclaratorRest>"
+        ));
+        BNFRule.add("InterfaceMethodDeclaratorRest", rightCreator(
+            "<FormalParameters> {\\[]} [throws <QualifiedIdentifierList>] ;"
+        ));
+        BNFRule.add("VoidInterfaceMethodDeclaratorRest", rightCreator(
+            "<FormalParameters> [throws <QualifiedIdentifierList>] ;"
+        ));
+        BNFRule.add("InterfaceGenericMethodDeclRest", rightCreator(
+            "<TypeParameters> <TypeOrVoid> <Identifier> <InterfaceMethodDeclaratorRest> ;"
+        ));
     }
 
     private static void prepareRuleAnnotationType() throws ParseException {
         // TYPEDECLARATION Annotation
-        BNFRule.add("AnnotationTypeDeclaration", rightCreator("@interface <Identifier> <AnnotationTypeBody>"));
+        BNFRule.add("AnnotationTypeDeclaration", rightCreator("@interface <Identifier> \\{ [AnnotationTypeElementDeclarations] \\}"));
+
+        BNFRule.add(
+            "AnnotationTypeElementDeclarations",
+            rightCreator(
+                "<AnnotationTypeElementRest> [<AnnotationTypeElementDeclarations>]",
+                "<Modifier> {<Modifier>} <AnnotationTypeElementRest> [<AnnotationTypeElementDeclarations>]"
+            )
+        );
+        BNFRule.add(
+            "AnnotationTypeElementRest",
+            rightCreator(
+                "<Type> <Identifier> <AnnotationMethodOrConstantRest> ;",
+                "<ClassDeclaration>",
+                "<IntefaceDeclaration>",
+                "<EnumDeclaration>",
+                "<AnnotationTypeDeclaration>"
+            )
+        );
+        BNFRule.add("AnnotationMethodOrConstantRest", rightCreator("( ) [\\[]] [default <ElementValue>]"));
     }
 
     private static void prepareRuleCommon() throws ParseException {
@@ -191,10 +270,11 @@ public class JavaEngine {
         BNFRule.add("VariableModifier", rightCreator("final", "<Annotation>"));
         BNFRule.add("VariableDeclaratorId", rightCreator("<Identifier> {\\[ \\]}"));
         BNFRule.add("VariableDeclarator", rightCreator("<Identifier> <VariableDeclaratorRest>"));
-        BNFRule.add("VariableDeclaratorRest", rightCreator("{\\[ \\]} [= <VariableInitializer>]"));
+        BNFRule.add("VariableDeclaratorRest", rightCreator("{\\[]} [= <VariableInitializer>]"));
 
         // TOKEN
-        BNFRule.add("ReferenceType", rightCreator("<Identifier> [<TypeArguments>] {. <Identifier> [<TypeArguments>]}"));
+        BNFRule.add("ReferenceType", rightCreator("<Identifier> [<ReferenceTypeRest>]"));
+        BNFRule.add("ReferenceTypeRest", rightCreator("<TypeArguments> [. <Identifier> [ReferenceTypeRest]]", ". Identifier [ReferenceTypeRest]"));
         BNFRule.add("TypeArguments", rightCreator("\\< <TypeArgument> {, <TypeArgument>} \\>"));
         BNFRule.add("TypeArgument", rightCreator("? [<ExtendsOrSuper> <ReferenceType>]", "<ReferenceType>"));
 
@@ -202,7 +282,7 @@ public class JavaEngine {
         BNFRule.add("TypeParameter", rightCreator("<Identifier> [extends <Bound>]"));
         BNFRule.add("Bound", rightCreator("<ReferenceType> {& <ReferenceType>}"));
 
-        BNFRule.add("Type", rightCreator("<BasicType> {\\[ \\]}", "<ReferenceType> {\\[ \\]}"));
+        BNFRule.add("Type", rightCreator("<BasicType> {\\[]}", "<ReferenceType> {\\[]}"));
         BNFRule.add("BasicType", rightCreator("byte", "short", "char", "int", "long", "float", "double", "boolean"));
 
         BNFRule.add("TypeList", rightCreator("<ReferenceType> {, <ReferenceType>}"));
@@ -210,11 +290,17 @@ public class JavaEngine {
         BNFRule.add("ExtendsOrSuper", rightCreator("extends", "super"));
         BNFRule.add("BlockOrSemicolon", rightCreator(";", "<Block>"));
 
-        BNFRule.add("Modifier", rightCreator("{<Annotation>} {<ModifierAfterAnnotation>}"));
+        BNFRule.add("Modifier", rightCreator(
+            "<Annotation> {<Annotation>} {<ModifierAfterAnnotation>}",
+            "<ModifierAfterAnnotation> {<ModifierAfterAnnotation>}"
+        ));
         BNFRule.add("ModifierAfterAnnotation", rightCreator("public", "private", "protected", "final", "static",
                 "abstract", "native", "synchronized", "transient", "volatile", "strictfp"));
 
-        BNFRule.add("ModifierWithoutStatic", rightCreator("{<Annotation>} {<ModifierAfterAnnotationWithoutStatic>}"));
+        BNFRule.add("ModifierWithoutStatic", rightCreator(
+            "<Annotation> {<Annotation>} {<ModifierAfterAnnotationWithoutStatic>}",
+            "<ModifierAfterAnnotationWithoutStatic> {<ModifierAfterAnnotationWithoutStatic>}"
+        ));
         BNFRule.add("ModifierAfterAnnotationWithoutStatic", rightCreator("public", "private", "protected", "final",
                 "abstract", "native", "synchronized", "transient", "volatile", "strictfp"));
 
@@ -242,6 +328,12 @@ public class JavaEngine {
         BNFRule.addFirst("TypeDeclaration", rightCreator("@", "abstract", "final", "private", "protected", "public", "static"));
         BNFRule.addFirst("TypeDeclarationModifierWithAnnotation", rightCreator("@"));
         BNFRule.addFirst("TypeDeclarationModifierWithAnnotation", rightCreator("public", "private", "protected", "static", "final", "abstract"));
+        BNFRule.addFirst("TypeDeclarationModifier", rightCreator("public"));
+        BNFRule.addFirst("TypeDeclarationModifier", rightCreator("private"));
+        BNFRule.addFirst("TypeDeclarationModifier", rightCreator("protected"));
+        BNFRule.addFirst("TypeDeclarationModifier", rightCreator("static"));
+        BNFRule.addFirst("TypeDeclarationModifier", rightCreator("final"));
+        BNFRule.addFirst("TypeDeclarationModifier", rightCreator("abstract"));
         BNFRule.addFirst("ClassOrInterfaceDeclaration", rightCreator("class", "enum"));
         BNFRule.addFirst("ClassOrInterfaceDeclaration", rightCreator("interface", "@interface"));
         BNFRule.addFirst("ClassDeclaration", rightCreator("class"));
@@ -255,15 +347,89 @@ public class JavaEngine {
                 "abstract", "native", "synchronized", "transient", "volatile", "strictfp"));
         BNFRule.addFirst("ClassBodyDeclaration", rightCreator("{"));
         BNFRule.addFirst("ClassBodyDeclaration", rightCreator("static"));
+        BNFRule.addFirst("ClassBodyDeclaration", rightCreator("class", "enum", "interface",
+                "@interface", "void", "boolean", "byte", "char", "double", "float", "int", "long", "short",
+                "<"), new Identifier());
         BNFRule.addFirst("ClassBodyDeclarationStaticPrefix", rightCreator("{"));
         BNFRule.addFirst("ClassBodyDeclarationStaticPrefix", rightCreator("public", "private", "protected", "final",
                 "abstract", "native", "synchronized", "transient", "volatile", "strictfp"));
+        BNFRule.addFirst("ClassBodyDeclarationStaticPrefix", rightCreator("class", "enum", "interface",
+                "@interface", "void", "boolean", "byte", "char", "double", "float", "int", "long", "short",
+                "<"), new Identifier());
 
         BNFRule.addFirst("MemberDeclaration", rightCreator("class", "enum", "interface", "@interface"));
         BNFRule.addFirst("MemberDeclaration", rightCreator("void"));
         BNFRule.addFirst("MemberDeclaration", rightCreator("boolean", "byte", "char", "double", "float", "int", "long", "short"));
         BNFRule.addFirst("MemberDeclaration", rightCreator("<"));
         BNFRule.addFirst("MemberDeclaration", new Identifier());
+
+        BNFRule.addFirst("VoidMethodDeclarationRest", rightCreator("("));
+        BNFRule.addFirst("MemberDeclarationRestAfterBasic", new Identifier());
+        BNFRule.addFirst("MethodDeclaratorRest", rightCreator("("));
+        BNFRule.addFirst("MethodOrFieldRest", rightCreator("("));
+        BNFRule.addFirst("MethodOrFieldRest", rightCreator("=", "[]"));
+        BNFRule.addFirst("MethodOrFieldRest", rightCreator(";"));
+
+        BNFRule.addFirst("MemberDeclarationRest", rightCreator("<"));
+        BNFRule.addFirst("MemberDeclarationRest", rightCreator("("));
+        BNFRule.addFirst("MemberDeclarationRest", new Identifier());
+
+        BNFRule.addFirst("GenericMethodOrConstructorRest", rightCreator("void"));
+        BNFRule.addFirst("GenericMethodOrConstructorRest",
+                rightCreator("boolean", "byte", "char", "double", "float", "int", "long", "short"));
+        BNFRule.addFirst("GenericMethodOrConstructorRest", new Identifier());
+
+        BNFRule.addFirst("GenericMethodOrConstructorRestRest", rightCreator(".", "<"));
+        BNFRule.addFirst("GenericMethodOrConstructorRestRest", rightCreator("[]"));
+        BNFRule.addFirst("GenericMethodOrConstructorRestRest", rightCreator("("));
+        BNFRule.addFirst("GenericMethodOrConstructorRestRest", new Identifier());
+
+        BNFRule.addFirst("ConstructorDeclaratorRest", rightCreator("("));
+
+        BNFRule.addFirst("EnumDeclaration", rightCreator("enum"));
+        BNFRule.addFirst("EnumConstants", rightCreator("@"), new Identifier());
+        BNFRule.addFirst("EnumConstant", rightCreator("@"));
+        BNFRule.addFirst("EnumConstant", new Identifier());
+        BNFRule.addFirst("EnumBodyDeclarations", rightCreator(";"));
+
+        BNFRule.addFirst("NormalInterfaceDeclaration", rightCreator("interface"));
+        BNFRule.addFirst("InterfaceBodyDeclaration", rightCreator(";"));
+        BNFRule.addFirst("InterfaceBodyDeclaration", rightCreator("@", "public", "private", "protected", "final",
+                "abstract", "static", "native", "synchronized", "transient", "volatile", "strictfp"));
+        BNFRule.addFirst("InterfaceBodyDeclaration", rightCreator("void", "<", "class", "interface", "@interface",
+                "boolean", "byte", "char", "double", "float", "int", "long", "short"), new Identifier());
+        BNFRule.addFirst("InterfaceMemberDecl", rightCreator("void"));
+        BNFRule.addFirst("InterfaceMemberDecl", rightCreator("<"));
+        BNFRule.addFirst("InterfaceMemberDecl", rightCreator("class", "enum"));
+        BNFRule.addFirst("InterfaceMemberDecl", rightCreator("interface", "@interface"));
+        BNFRule.addFirst("InterfaceMemberDecl", rightCreator("boolean", "byte", "char",
+                "double", "float", "int", "long", "short"), new Identifier());
+        BNFRule.addFirst("InterfaceMethodOrFieldDecl", rightCreator("boolean", "byte", "char",
+                "double", "float", "int", "long", "short"), new Identifier());
+
+        BNFRule.addFirst("InterfaceMethodOrFieldRest", rightCreator("=", "[]"));
+        BNFRule.addFirst("InterfaceMethodOrFieldRest", rightCreator("("));
+        BNFRule.addFirst("ConstantDeclaratorRest", rightCreator("="));
+        BNFRule.addFirst("ConstantDeclaratorRest", rightCreator("[]"));
+        BNFRule.addFirst("ConstantDeclarator", new Identifier());
+        BNFRule.addFirst("InterfaceMethodDeclaratorRest", rightCreator("("));
+        BNFRule.addFirst("VoidInterfaceMethodDeclaratorRest", rightCreator("("));
+        BNFRule.addFirst("InterfaceGenericMethodDeclRest", rightCreator("<"));
+
+        BNFRule.addFirst("AnnotationTypeDeclaration", rightCreator("@interface"));
+        BNFRule.addFirst("AnnotationTypeElementDeclarations", rightCreator("class", "interface",
+                "enum", "@interface", "boolean", "byte", "char", "double", "float", "int", "long",
+                "short"), new Identifier());
+        BNFRule.addFirst("AnnotationTypeElementDeclarations", rightCreator("@", "public", "private",
+                "protected", "final", "abstract", "static", "native", "synchronized", "transient",
+                "volatile", "strictfp"));
+        BNFRule.addFirst("AnnotationTypeElementRest", rightCreator("boolean", "byte", "char",
+                "double", "float", "int", "long", "short"), new Identifier());
+        BNFRule.addFirst("AnnotationTypeElementRest", rightCreator("class"));
+        BNFRule.addFirst("AnnotationTypeElementRest", rightCreator("interface"));
+        BNFRule.addFirst("AnnotationTypeElementRest", rightCreator("enum"));
+        BNFRule.addFirst("AnnotationTypeElementRest", rightCreator("@interface"));
+        BNFRule.addFirst("AnnotationMethodOrConstantRest", rightCreator("("));
 
         BNFRule.addFirst("TypeArguments", rightCreator("<"));
         BNFRule.addFirst("TypeArgument", rightCreator("?"));
@@ -280,6 +446,48 @@ public class JavaEngine {
         BNFRule.addFirst("AnnotationElementRest", rightCreator("="));
         BNFRule.addFirst("AnnotationElementValue", rightCreator("@"));
         BNFRule.addFirst("AnnotationElementValue", rightCreator("{"));
+
+        BNFRule.addFirst("FormalParameters", rightCreator("("));
+        BNFRule.addFirst("FormalParametersDecls", rightCreator("@", "final"));
+        BNFRule.addFirst("FormalParametersDecls", rightCreator("byte", "short", "char", "int", "long", "float", "double", "boolean"), new Identifier());
+        BNFRule.addFirst("FormalParametersDeclsRest", rightCreator("..."));
+        BNFRule.addFirst("FormalParametersDeclsRest", new Identifier());
+
+        BNFRule.addFirst("VariableModifier", rightCreator("final"));
+        BNFRule.addFirst("VariableModifier", rightCreator("@"));
+
+        BNFRule.addFirst("VariableDeclaratorId", new Identifier());
+        BNFRule.addFirst("VariableDeclarator", new Identifier());
+        BNFRule.addFirst("VariableDeclaratorRest", rightCreator("[]"));
+        BNFRule.addFirst("VariableDeclaratorRest", rightCreator("="));
+
+        BNFRule.addFirst("Modifier", rightCreator("@"));
+        BNFRule.addFirst("Modifier", rightCreator("public", "private", "protected", "final",
+                "abstract", "static", "native", "synchronized", "transient", "volatile", "strictfp"));
+        BNFRule.addFirst("ModifierAfterAnnotation", rightCreator("public"));
+        BNFRule.addFirst("ModifierAfterAnnotation", rightCreator("private"));
+        BNFRule.addFirst("ModifierAfterAnnotation", rightCreator("protected"));
+        BNFRule.addFirst("ModifierAfterAnnotation", rightCreator("final"));
+        BNFRule.addFirst("ModifierAfterAnnotation", rightCreator("static"));
+        BNFRule.addFirst("ModifierAfterAnnotation", rightCreator("abstract"));
+        BNFRule.addFirst("ModifierAfterAnnotation", rightCreator("native"));
+        BNFRule.addFirst("ModifierAfterAnnotation", rightCreator("synchronized"));
+        BNFRule.addFirst("ModifierAfterAnnotation", rightCreator("transient"));
+        BNFRule.addFirst("ModifierAfterAnnotation", rightCreator("volatile"));
+        BNFRule.addFirst("ModifierAfterAnnotation", rightCreator("strictfp"));
+        BNFRule.addFirst("ModifierWithoutStatic", rightCreator("@"));
+        BNFRule.addFirst("ModifierWithoutStatic", rightCreator("public", "private", "protected", "final", "abstract",
+                "native", "synchronized", "transient", "volatile", "strictfp"));
+        BNFRule.addFirst("ModifierAfterAnnotationWithoutStatic", rightCreator("public"));
+        BNFRule.addFirst("ModifierAfterAnnotationWithoutStatic", rightCreator("private"));
+        BNFRule.addFirst("ModifierAfterAnnotationWithoutStatic", rightCreator("protected"));
+        BNFRule.addFirst("ModifierAfterAnnotationWithoutStatic", rightCreator("final"));
+        BNFRule.addFirst("ModifierAfterAnnotationWithoutStatic", rightCreator("abstract"));
+        BNFRule.addFirst("ModifierAfterAnnotationWithoutStatic", rightCreator("native"));
+        BNFRule.addFirst("ModifierAfterAnnotationWithoutStatic", rightCreator("synchronized"));
+        BNFRule.addFirst("ModifierAfterAnnotationWithoutStatic", rightCreator("transient"));
+        BNFRule.addFirst("ModifierAfterAnnotationWithoutStatic", rightCreator("volatile"));
+        BNFRule.addFirst("ModifierAfterAnnotationWithoutStatic", rightCreator("strictfp"));
 
         BNFRule.addFirst("TypeDeclarationModifierWithAnnotation", rightCreator("@", "public", "private", "protected", "final",
                 "static", "abstract", "native", "synchronized", "transient", "volatile", "strictfp"));

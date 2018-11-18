@@ -340,7 +340,11 @@ public class TextFileParser implements TextFileParserInterface {
 
     @Override
     public void resetToMarker(Marker marker) {
-        JavaEngine.LOGGER.warning("This parser is not parsing with LL(1) rule.");
+        if (JavaEngine.throwNonLL1) {
+            throw new RuntimeException("This parser is not parsing with LL(1) rule.");
+        } else {
+            JavaEngine.LOGGER.warning("This parser is not parsing with LL(1) rule.");
+        }
 
         if (marker.lineNumber != lineNumber) {
             throw new RuntimeException("Cannot reset no another line");
