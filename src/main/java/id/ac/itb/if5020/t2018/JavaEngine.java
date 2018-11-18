@@ -282,12 +282,14 @@ public class JavaEngine {
         // TOKEN
         BNFRule.add("ReferenceType", rightCreator("<Identifier> [<ReferenceTypeRest>]"));
         BNFRule.add("ReferenceTypeRest", rightCreator("<TypeArguments> [. <Identifier> [ReferenceTypeRest]]", ". Identifier [ReferenceTypeRest]"));
-        BNFRule.add("TypeArguments", rightCreator("\\< <TypeArgument> {, <TypeArgument>} \\>"));
+        BNFRule.add("TypeArguments", rightCreator("\\< <TypeArgument> {, <TypeArgument>} <ClosingTemplateType>"));
+        BNFRule.add("TypeArgumentsWithoutOpening", rightCreator("<TypeArgument> {, <TypeArgument>} <ClosingTemplateType>"));
         BNFRule.add("TypeArgument", rightCreator("? [<ExtendsOrSuper> <ReferenceType>]", "<ReferenceType>"));
 
-        BNFRule.add("TypeParameters", rightCreator("\\< <TypeParameter> {, <TypeParameter>} \\>"));
+        BNFRule.add("TypeParameters", rightCreator("\\< <TypeParameter> {, <TypeParameter>} <ClosingTemplateType>"));
         BNFRule.add("TypeParameter", rightCreator("<Identifier> [extends <Bound>]"));
         BNFRule.add("Bound", rightCreator("<ReferenceType> {& <ReferenceType>}"));
+        BNFRule.add("ClosingTemplateType", new ClosingTemplateType());
 
         BNFRule.add("Type", rightCreator("<BasicType> {\\[]}", "<ReferenceType> {\\[]}"));
         BNFRule.add("BasicType", rightCreator("byte", "short", "char", "int", "long", "float", "double", "boolean"));
@@ -441,7 +443,9 @@ public class JavaEngine {
         BNFRule.addFirst("AnnotationMethodOrConstantRest", rightCreator("("));
 
         BNFRule.addFirst("TypeArguments", rightCreator("<"));
+        BNFRule.addFirst("TypeArgumentsWithoutOpening", rightCreator("?"), new Identifier());
         BNFRule.addFirst("TypeArgument", rightCreator("?"));
+        BNFRule.addFirst("TypeArgument", new Identifier());
         BNFRule.addFirst("TypeParameters", rightCreator("<"));
 
         BNFRule.addFirst("Type", rightCreator("byte", "short", "char", "int", "long", "float", "double", "boolean"));
@@ -478,7 +482,7 @@ public class JavaEngine {
         BNFRule.addFirst("VariableDeclaratorRest", rightCreator("[]"));
         BNFRule.addFirst("VariableDeclaratorRest", rightCreator("="));
         BNFRule.addFirst("VariableInitializer", rightCreator("{"));
-        BNFRule.addFirst("VariableInitializer", rightCreator("++", "--", "!", "~", "+", "-", "("), new Literal());
+        BNFRule.addFirst("VariableInitializer", rightCreator("++", "--", "!", "~", "+", "-", "("), new Literal(), new Identifier());
         BNFRule.addFirst("ArrayInitializer", rightCreator("{"));
 
         BNFRule.addFirst("Modifier", rightCreator("@"));
@@ -724,7 +728,7 @@ public class JavaEngine {
 
 	private static void prepareRuleExpression() throws ParseException {
 		BNFRule.add("Expression", rightCreator("<ExpressionA> [<AssignmentOperator> <ExpressionA>]"));
-		BNFRule.add("AssignmentOperator", rightCreator("=", "+=", "-=", "*=", "/=", "&=", "|=", "^=", "%=", "\\<<=", "\\>>=", "\\>>>="));
+		BNFRule.add("AssignmentOperator", rightCreator("=", "+=", "-=", "*=", "/=", "&=", "|=", "^=", "%=", "\\<<=", "\\> \\> \\=", "\\> \\> \\> ="));
 		BNFRule.add("ExpressionA", rightCreator("<ExpressionB> [<ExpressionARest>]"));
 		BNFRule.add("ExpressionARest", rightCreator("? <Expression> : <ExpressionA>"));
 		BNFRule.add("ExpressionB", rightCreator("<ExpressionC> [<ExpressionBRest>]"));
@@ -783,7 +787,8 @@ public class JavaEngine {
 			"super <SuperSuffix>",
 			"new [<NonWildcardTypeArguments>] <InnerCreator>"));
 		BNFRule.add("NonWildcardTypeArguments", rightCreator("\\< <TypeList> \\>"));
-		BNFRule.add("TypeArgumentsOrDiamond", rightCreator("\\<>", "<TypeArguments>"));
+        BNFRule.add("TypeArgumentsOrDiamond", rightCreator("\\< <TypeArgumentsOrDiamondRest>"));
+        BNFRule.add("TypeArgumentsOrDiamondRest", rightCreator("\\>", "<TypeArgumentsWithoutOpening>"));
 	}
 
     public static String[] rightCreator(String... right) {

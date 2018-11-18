@@ -310,7 +310,7 @@ public class TextFileParser implements TextFileParserInterface {
 		if (currentLine.substring(currentCol).matches("^<.*")) {
             if (currentLine.substring(currentCol).matches("^<{2}[^<].*")
 				|| currentLine.substring(currentCol).matches("^<=[^<=].*")
-				|| currentLine.substring(currentCol).matches("^<>[^<>].*")) {
+				/*|| currentLine.substring(currentCol).matches("^<>[^<>].*")*/) {
                 shiftedSymbol = 2;
                 return updateAfterTokenization();
             }
@@ -484,11 +484,15 @@ public class TextFileParser implements TextFileParserInterface {
     }
 
     @Override
-    public char readCurrentTokenChar() {
+    public char readCurrentTokenChar() throws ParseException {
         if (currentTokenIndex >= currentToken.length()) {
             return 0;
         }
-        return currentToken.charAt(currentTokenIndex++);
+        char retval = currentToken.charAt(currentTokenIndex++);
+        if (currentTokenIndex >= currentToken.length()) {
+            readNextToken();
+        }
+        return retval;
     }
 
     @Override

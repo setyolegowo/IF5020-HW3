@@ -346,6 +346,10 @@ public class TestParsingRule {
         parse("ClassBodyDeclaration");
         JavaEngine.parser = new TextStringParser("public String example1;");
         parse("ClassBodyDeclaration");
+        JavaEngine.parser = new TextStringParser("private HashMap<String, String> example1_0;");
+        parse("ClassBodyDeclaration");
+        JavaEngine.parser = new TextStringParser("HashMap<String, List<String>> example1_1;");
+        parse("ClassBodyDeclaration");
         JavaEngine.parser = new TextStringParser("private String example2 = \"AAAA\";");
         parse("ClassBodyDeclaration");
         JavaEngine.parser = new TextStringParser("protected String[] example3 = {\"AAA\", \"BBB\"};");
@@ -384,6 +388,41 @@ public class TestParsingRule {
         parse("ClassBodyDeclaration");
         JavaEngine.parser = new TextStringParser("public CLassName() {}");
         parse("ClassBodyDeclaration");
+    }
+
+    @Test
+    public void testActualRule3() throws IOException, ParseException {
+        JavaEngine.prepareRules();
+        JavaEngine.prepareFirstList();
+
+        JavaEngine.parser = new TextStringParser("for(;;) {}");
+        parse("BlockStatement");
+        JavaEngine.parser = new TextStringParser("for(i = 2; i < 2; i++) {}");
+        parse("BlockStatement");
+        JavaEngine.parser = new TextStringParser("for(; i < 2;) {}");
+        parse("BlockStatement");
+        JavaEngine.parser = new TextStringParser("while(true) {}");
+        parse("BlockStatement");
+        JavaEngine.parser = new TextStringParser("while(variable) {}");
+        parse("BlockStatement");
+        JavaEngine.parser = new TextStringParser("while(variable != false) {}");
+        parse("BlockStatement");
+        JavaEngine.parser = new TextStringParser("if(correct) {}");
+        parse("BlockStatement");
+        JavaEngine.parser = new TextStringParser("if(correct) variable++;");
+        parse("BlockStatement");
+        JavaEngine.parser = new TextStringParser("try { mymethod(); } catch (Exception e) {}");
+        parse("BlockStatement");
+        JavaEngine.parser = new TextStringParser("callMethod();");
+        parse("BlockStatement");
+        JavaEngine.parser = new TextStringParser("callMethod().callAnotherMethod();");
+        parse("BlockStatement");
+        JavaEngine.parser = new TextStringParser("myidentity = callMethod().accessField;");
+        parse("BlockStatement");
+        JavaEngine.parser = new TextStringParser("HashMap<String, String> myvar = new HashMap<>();");
+        parse("BlockStatement");
+        JavaEngine.parser = new TextStringParser("HashMap<String, List<String>> myvar = new HashMap<>(3);");
+        parse("BlockStatement");
     }
 
     private void parse(String startSymbol) throws IOException, ParseException {
