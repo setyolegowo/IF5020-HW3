@@ -67,22 +67,22 @@ public class TestParsingRule {
 
 		JavaEngine.parser = new TextStringParser("2_147_483_648L");
         parse("Literal");
-		
+
 		JavaEngine.parser = new TextStringParser("0xC0B0L");
         parse("Literal");
 
 		JavaEngine.parser = new TextStringParser("'a'");
         parse("Literal");
-		
+
 		JavaEngine.parser = new TextStringParser("\"test\"");
         parse("Literal");
-		
+
 		JavaEngine.parser = new TextStringParser("false");
         parse("Literal");
-		
+
 		JavaEngine.parser = new TextStringParser("null");
         parse("Literal");
-		
+
 		JavaEngine.parser = new TextStringParser("'\\n'");
         parse("Literal");
 	}
@@ -270,10 +270,49 @@ public class TestParsingRule {
         JavaEngine.parser = new TextStringParser("public void MyFunction();");
         parse("ClassBodyDeclaration");
 
-        JavaEngine.parser = new TextStringParser("protected Identity MyFunction();");
+        JavaEngine.parser = new TextStringParser("protected char MyFunction();");
         parse("ClassBodyDeclaration");
 
-        JavaEngine.parser = new TextStringParser("private Identity MyFunction;");
+        JavaEngine.parser = new TextStringParser("protected Identity[] MyFunction();");
+        parse("ClassBodyDeclaration");
+
+        JavaEngine.parser = new TextStringParser("private Identity[][] MyFunction;");
+        parse("ClassBodyDeclaration");
+
+        JavaEngine.parser = new TextStringParser("private Identity<> MyFunction;");
+        parseErrorExpected("ClassBodyDeclaration", "Token is not Identifier");
+
+        JavaEngine.parser = new TextStringParser("private Identity<AnotherClass> MyFunction;");
+        parse("ClassBodyDeclaration");
+
+        JavaEngine.parser = new TextStringParser("private Identity<?> MyFunction;");
+        parse("ClassBodyDeclaration");
+
+        JavaEngine.parser = new TextStringParser("private Identity<? extends AnotherClass> MyFunction;");
+        parse("ClassBodyDeclaration");
+
+        JavaEngine.parser = new TextStringParser("private Identity<? super AnotherClass> MyFunction;");
+        parse("ClassBodyDeclaration");
+
+        JavaEngine.parser = new TextStringParser("private Identity<?>[] MyFunction;");
+        parse("ClassBodyDeclaration");
+
+        JavaEngine.parser = new TextStringParser("private Identity[][] MyFunction;");
+        parse("ClassBodyDeclaration");
+
+        JavaEngine.parser = new TextStringParser("private Identity[][] MyFunction;");
+        parse("ClassBodyDeclaration");
+
+        JavaEngine.parser = new TextStringParser("private boolean[][] MyFunction;");
+        parse("ClassBodyDeclaration");
+
+        JavaEngine.parser = new TextStringParser("private boolean<?> MyFunction;");
+        parseErrorExpected("ClassBodyDeclaration", "Token is not match with rule MemberDeclarationRestAfterBasic. Expected <#IDENTIFIER#>, ");
+
+        JavaEngine.parser = new TextStringParser("private MyFunction;");
+        parseErrorExpected("ClassBodyDeclaration", "Token is not match with rule MemberDeclarationRest. Expected '<', '(', '[]', <#IDENTIFIER#>, ");
+
+        JavaEngine.parser = new TextStringParser("private MyFunction() {}");
         parse("ClassBodyDeclaration");
 
         JavaEngine.parser = new TextStringParser("private Identity MyFunction {");
@@ -285,8 +324,11 @@ public class TestParsingRule {
         JavaEngine.parser = new TextStringParser("void MyFunction();");
         parse("ClassBodyDeclaration");
 
-        // JavaEngine.parser = new TextStringParser("static final MyFunction();");
-        // parse("ClassBodyDeclaration");
+        JavaEngine.parser = new TextStringParser("static final MyFunction() {}");
+        parse("ClassBodyDeclaration");
+
+        JavaEngine.parser = new TextStringParser("static {}");
+        parse("ClassBodyDeclaration");
     }
 
     private void parse(String startSymbol) throws IOException, ParseException {
@@ -295,7 +337,7 @@ public class TestParsingRule {
             BNFRule rule = BNFRule.get(startSymbol);
             rule.parse();
         } catch (RuleNotMatchException e) {
-            Assert.fail("No exception should no be thrown");
+            Assert.fail("No exception should no be thrown. Message: " + e.getMessage());
         }
         Assert.assertTrue("Parsing should be until end of file", JavaEngine.parser.isEndOfFile());
     }

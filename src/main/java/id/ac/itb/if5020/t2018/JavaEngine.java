@@ -138,8 +138,9 @@ public class JavaEngine {
         BNFRule.add(
             "MemberDeclarationRest",
             rightCreator(
-                "<TypeParameters> <MethodOrFieldRest>",
+                "<TypeArguments> {\\[]} <Identifier> <MethodOrFieldRest>",
                 "<ConstructorDeclaratorRest>",
+                "\\[] {\\[]} <Identifier> <MethodOrFieldRest>",
                 "<Identifier> <MethodOrFieldRest>"
             )
         );
@@ -272,7 +273,7 @@ public class JavaEngine {
         BNFRule.add("VariableModifier", rightCreator("final", "<Annotation>"));
         BNFRule.add("VariableDeclaratorId", rightCreator("<Identifier> {\\[ \\]}"));
         BNFRule.add("VariableDeclarator", rightCreator("<Identifier> [<VariableDeclaratorRest>]"));
-        BNFRule.add("VariableDeclaratorRest", rightCreator("{\\[]} [= <VariableInitializer>]"));
+        BNFRule.add("VariableDeclaratorRest", rightCreator("\\[] {\\[]} [= <VariableInitializer>]", "= <VariableInitializer>"));
 
         // TOKEN
         BNFRule.add("ReferenceType", rightCreator("<Identifier> [<ReferenceTypeRest>]"));
@@ -374,6 +375,7 @@ public class JavaEngine {
 
         BNFRule.addFirst("MemberDeclarationRest", rightCreator("<"));
         BNFRule.addFirst("MemberDeclarationRest", rightCreator("("));
+        BNFRule.addFirst("MemberDeclarationRest", rightCreator("[]"));
         BNFRule.addFirst("MemberDeclarationRest", new Identifier());
 
         BNFRule.addFirst("GenericMethodOrConstructorRest", rightCreator("void"));
@@ -503,7 +505,7 @@ public class JavaEngine {
 
         BNFRule.addFirst("QualifiedIdentigier", new Identifier());
         BNFRule.addFirst("Identifier", new Identifier());
-		
+
 		// Block
 		BNFRule.addFirst("Block", rightCreator("{"));
 		BNFRule.addFirst("BlockStatement", rightCreator("class", "enum"));
@@ -552,7 +554,7 @@ public class JavaEngine {
 		BNFRule.addFirst("Resources", rightCreator("final", "@"), new Identifier());
 		BNFRule.addFirst("Resource", rightCreator("final", "@"));
 		BNFRule.addFirst("Resource", new Identifier());
-		
+
 		// Expression
 		BNFRule.addFirst("Expression", rightCreator("++", "--", "!", "~", "+", "-", "("), new Literal());
 		BNFRule.addFirst("AssignmentOperator", rightCreator("="));
@@ -602,10 +604,10 @@ public class JavaEngine {
 		BNFRule.addFirst("PrefixOp", rightCreator("-"));
 		BNFRule.addFirst("PostfixOp", rightCreator("++"));
 		BNFRule.addFirst("PostfixOp", rightCreator("--"));
-		
-		BNFRule.add("Primary", new NumberLiteral());
+
+		BNFRule.addFirst("Primary", new Literal());
     }
-	
+
 	private static void prepareRuleBlock() throws ParseException {
 		BNFRule.add("Block", rightCreator("\\{ {<BlockStatement>} \\}"));
 		BNFRule.add("BlockStatement", rightCreator("<ClassOrInterfaceDeclaration>",
@@ -655,7 +657,7 @@ public class JavaEngine {
 		BNFRule.add("Resource", rightCreator("<VariableModifier> {<VariableModifier>} <ReferenceType> <VariableDeclaratorId> = <Expression>",
 			"<ReferenceType> <VariableDeclaratorId> = <Expression>"));
 	}
-	
+
 	private static void prepareRuleExpression() throws ParseException {
 		BNFRule.add("Expression", rightCreator("<ExpressionA> [<AssignmentOperator> <ExpressionA>]"));
 		BNFRule.add("AssignmentOperator", rightCreator("=", "+=", "-=", "*=", "/=", "&=", "|=", "^=", "%=", "\\<<=", "\\>>=", "\\>>>="));

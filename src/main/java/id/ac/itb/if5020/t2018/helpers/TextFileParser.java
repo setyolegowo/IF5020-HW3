@@ -162,7 +162,7 @@ public class TextFileParser implements TextFileParserInterface {
             if (currentLine.substring(currentCol).matches("^\\.{3}[^\\.]*")) {
                 shiftedSymbol = 3;
                 return updateAfterTokenization();
-            } else if (currentLine.substring(currentCol).matches("^\\.[0-9_]+([eE][+-]?[0-9_]+)?[fFdD]?.*")) {
+            } else if (currentLine.substring(currentCol).matches("^\\.[0-9]+(_[0-9]+)*([eE][+-]?[0-9_]+)?[fFdD]?.*")) {
 				shiftedSymbol = 0;
 				while (currentLine.substring(currentCol, currentCol + shiftedSymbol + 1).matches("^[0-9_\\.eE+-fFdD]+")) {
 					shiftedSymbol++;
@@ -172,7 +172,6 @@ public class TextFileParser implements TextFileParserInterface {
 				}
 				return updateAfterTokenization();
 			}
-			
 
             shiftedSymbol = 1;
             return updateAfterTokenization();
@@ -181,7 +180,7 @@ public class TextFileParser implements TextFileParserInterface {
             shiftedSymbol = 2;
             return updateAfterTokenization();
         }
-        
+
         if (currentLine.substring(currentCol).matches("^@.*")) {
             if (currentLine.substring(currentCol).matches("^@interface.*")) {
                 shiftedSymbol = 10;
@@ -190,7 +189,7 @@ public class TextFileParser implements TextFileParserInterface {
             shiftedSymbol = 1;
             return updateAfterTokenization();
         }
-		
+
 		// handle &, &&, and &=
 		if (currentLine.substring(currentCol).matches("^&.*")) {
             if (currentLine.substring(currentCol).matches("^&{2}[^&].*")
@@ -201,7 +200,7 @@ public class TextFileParser implements TextFileParserInterface {
             shiftedSymbol = 1;
             return updateAfterTokenization();
         }
-		
+
 		// handle |, ||, |=
 		if (currentLine.substring(currentCol).matches("^\\|.*")) {
 			if (currentLine.substring(currentCol).matches("^\\|{2}[^\\|].*")
@@ -212,7 +211,7 @@ public class TextFileParser implements TextFileParserInterface {
             shiftedSymbol = 1;
             return updateAfterTokenization();
 		}
-		
+
 		// handle ! and !=
 		if (currentLine.substring(currentCol).matches("^!.*")) {
 			if (currentLine.substring(currentCol).matches("^!=[^!=].*")) {
@@ -222,7 +221,7 @@ public class TextFileParser implements TextFileParserInterface {
             shiftedSymbol = 1;
             return updateAfterTokenization();
 		}
-		
+
 		// handle +, ++, and +=
 		if (currentLine.substring(currentCol).matches("^\\+.*")) {
             if (currentLine.substring(currentCol).matches("^\\+{2}[^\\+].*")
@@ -233,7 +232,7 @@ public class TextFileParser implements TextFileParserInterface {
             shiftedSymbol = 1;
             return updateAfterTokenization();
         }
-		
+
 		// handle -, --, and -=
 		if (currentLine.substring(currentCol).matches("^\\-.*")) {
 			if (currentLine.substring(currentCol).matches("^\\-{2}[^\\-].*")
@@ -244,7 +243,7 @@ public class TextFileParser implements TextFileParserInterface {
             shiftedSymbol = 1;
             return updateAfterTokenization();
 		}
-		
+
 		// handle *, and *=
 		if (currentLine.substring(currentCol).matches("^\\*.*")) {
 			if (currentLine.substring(currentCol).matches("^\\*=[^\\*=].*")) {
@@ -254,7 +253,7 @@ public class TextFileParser implements TextFileParserInterface {
             shiftedSymbol = 1;
             return updateAfterTokenization();
 		}
-		
+
 		// handle /, and /=
 		if (currentLine.substring(currentCol).matches("^/.*")) {
 			if (currentLine.substring(currentCol).matches("^/=[^/=].*")) {
@@ -264,7 +263,7 @@ public class TextFileParser implements TextFileParserInterface {
             shiftedSymbol = 1;
             return updateAfterTokenization();
 		}
-		
+
 		// handle ^, and ^=
 		if (currentLine.substring(currentCol).matches("^\\^.*")) {
 			if (currentLine.substring(currentCol).matches("^\\^=[^\\^=].*")) {
@@ -274,7 +273,7 @@ public class TextFileParser implements TextFileParserInterface {
             shiftedSymbol = 1;
             return updateAfterTokenization();
 		}
-		
+
 		// handle %, and %=
 		if (currentLine.substring(currentCol).matches("^%.*")) {
 			if (currentLine.substring(currentCol).matches("^%=[^%=].*")) {
@@ -284,7 +283,7 @@ public class TextFileParser implements TextFileParserInterface {
             shiftedSymbol = 1;
             return updateAfterTokenization();
 		}
-		
+
 		// handle <, <<, <=, and <<=
 		if (currentLine.substring(currentCol).matches("^<.*")) {
             if (currentLine.substring(currentCol).matches("^<{2}[^<].*")
@@ -299,7 +298,7 @@ public class TextFileParser implements TextFileParserInterface {
             shiftedSymbol = 1;
             return updateAfterTokenization();
         }
-		
+
 		// handle >, >>, >>>, >=, >>=, and >>>=
 		if (currentLine.substring(currentCol).matches("^>.*")) {
             if (currentLine.substring(currentCol).matches("^>=[^>=].*")
@@ -319,7 +318,7 @@ public class TextFileParser implements TextFileParserInterface {
             shiftedSymbol = 1;
             return updateAfterTokenization();
         }
-		
+
         if (currentLine.substring(currentCol).matches("^[,;:{}()$^!~`\\?\\\\\\[\\]].*")) {
             shiftedSymbol = 1;
             return updateAfterTokenization();
@@ -338,17 +337,17 @@ public class TextFileParser implements TextFileParserInterface {
         // - start reading integer or float
         if (currentLine.substring(currentCol).matches("^[0-9].*")) {
             shiftedSymbol = 0;
-			
+
 			// Decimal Integer Zero Without Suffix
 			if (currentLine.substring(currentCol).matches("^0[^0-9xXbBlL]*")) {
 				shiftedSymbol = 1;
             }
-			
+
 			// Decimal Integer Zero With Suffix
 			if (currentLine.substring(currentCol).matches("^0[lL][^0-9xXbB]*")) {
 				shiftedSymbol = 2;
             }
-			
+
 			// Decimal Integer Non Zero
 			if (currentLine.substring(currentCol).matches("^[1-9].*")) {
 				shiftedSymbol = 0;
@@ -359,7 +358,7 @@ public class TextFileParser implements TextFileParserInterface {
 					}
 				}
             }
-			
+
 			// Hex Integer
 			if (currentLine.substring(currentCol).matches("^0[xX][^\\.]*")) {
 				shiftedSymbol = 1;
@@ -370,7 +369,7 @@ public class TextFileParser implements TextFileParserInterface {
 					}
 				}
             }
-			
+
 			// Octal Integer
 			if (currentLine.substring(currentCol).matches("^0[0-7].*")) {
 				shiftedSymbol = 1;
@@ -381,7 +380,7 @@ public class TextFileParser implements TextFileParserInterface {
 					}
 				}
             }
-			
+
 			// Binary Integer
 			if (currentLine.substring(currentCol).matches("^0[bB].*")) {
 				shiftedSymbol = 1;
@@ -392,7 +391,7 @@ public class TextFileParser implements TextFileParserInterface {
 					}
 				}
             }
-			
+
 			// Decimal Floating
 			if (currentLine.substring(currentCol).matches("^[0-9_]+\\.[0-9_]*([eE][+-]?[0-9_]+)?[fFdD]?.*")
 				|| currentLine.substring(currentCol).matches("^[0-9_]+[eE][+-]?[0-9_]+[fFdD]?.*")
@@ -404,7 +403,7 @@ public class TextFileParser implements TextFileParserInterface {
 					}
 				}
 			}
-			
+
 			// Hex Floating
 			if (currentLine.substring(currentCol).matches("^0[xX][0-9A-Fa-f_]+[\\.]?[pP][+-]?[0-9_]+[fFdD]?.*")
 				|| currentLine.substring(currentCol).matches("^0[xX][0-9A-Fa-f_]*\\.[0-9A-Fa-f_]+[pP][+-]?[0-9_]+[fFdD]?.*")) {
@@ -415,10 +414,10 @@ public class TextFileParser implements TextFileParserInterface {
 					}
 				}
 			}
-			
+
             return updateAfterTokenization();
         }
-		
+
 		// - Start reading character
 		if (currentLine.substring(currentCol).matches("^'.*")) {
             if (currentLine.charAt(currentCol + 1) == '\\') {
@@ -426,14 +425,14 @@ public class TextFileParser implements TextFileParserInterface {
 			} else {
 				shiftedSymbol = 3;
 			}
-			
+
 			if (currentCol + shiftedSymbol > currentLine.length()) {
                 throw new ParseException("Failed parsing character literal \"" + currentLine + "\". Character has no end?", currentCol);
             }
-			
+
             return updateAfterTokenization();
         }
-		
+
         return false;
     }
 
