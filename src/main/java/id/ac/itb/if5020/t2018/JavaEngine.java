@@ -522,7 +522,7 @@ public class JavaEngine {
 		// Block
 		BNFRule.addFirst("Block", rightCreator("{"));
 		BNFRule.addFirst("BlockStatement", rightCreator("class", "enum"));
-		BNFRule.addFirst("BlockStatement", rightCreator("{", ";", "if", "assert", "switch", "while", "do", "for", "break", "continue", "return", "throw", "synchronized", "try"));
+		BNFRule.addFirst("BlockStatement", rightCreator("{", ";", "if", "assert", "switch", "while", "do", "for", "break", "continue", "return", "throw", "synchronized", "try", "++", "--", "!", "~", "+", "-", "(", "this", "super", "new", "<", "boolean", "byte", "char", "double", "float", "int", "long", "short", "void"), new Identifier(), new Literal());
 		BNFRule.addFirst("BlockStatement", rightCreator("boolean", "byte", "char", "double", "float", "int", "long", "short", "final", "@"), new Identifier());
 		BNFRule.addFirst("LocalVariableDeclarationStatement", rightCreator("final", "@"));
 		BNFRule.addFirst("LocalVariableDeclarationStatement", rightCreator("boolean", "byte", "char", "double", "float", "int", "long", "short"), new Identifier());
@@ -546,9 +546,10 @@ public class JavaEngine {
 		BNFRule.addFirst("SwitchBlockStatementGroup", rightCreator("case", "default"));
 		BNFRule.addFirst("SwitchLabel", rightCreator("case"));
 		BNFRule.addFirst("SwitchLabel", rightCreator("default"));
-		BNFRule.addFirst("SwitchLabelCase", rightCreator("expression"));
+		BNFRule.addFirst("SwitchLabelCase", rightCreator("++", "--", "!", "~", "+", "-", "(", "this", "super", "new", "<", "boolean", "byte", "char", "double", "float", "int", "long", "short", "void"), new Identifier(), new Literal());
 		BNFRule.addFirst("SwitchLabelCase", new Identifier());
-		BNFRule.addFirst("ForControl", rightCreator("expression"));
+		BNFRule.addFirst("ForControl", rightCreator(";"));
+		BNFRule.addFirst("ForControl", rightCreator("++", "--", "!", "~", "+", "-", "(", "this", "super", "new", "<", "boolean", "byte", "char", "double", "float", "int", "long", "short", "void"), new Identifier(), new Literal());
 		BNFRule.addFirst("ForControl", rightCreator("boolean", "byte", "char", "double", "float", "int", "long", "short", "final", "@"), new Identifier());
 		BNFRule.addFirst("ForVarControl", rightCreator("final", "@"));
 		BNFRule.addFirst("ForVarControl", rightCreator("boolean", "byte", "char", "double", "float", "int", "long", "short"), new Identifier());
@@ -557,8 +558,8 @@ public class JavaEngine {
 		BNFRule.addFirst("ForVarControlRest", rightCreator(":"));
 		BNFRule.addFirst("ForVariableDeclaratorsRest", rightCreator("="));
 		BNFRule.addFirst("ForVariableDeclaratorsRest", rightCreator(","));
-		BNFRule.addFirst("ForInit", rightCreator("expression"));
-		BNFRule.addFirst("ForUpdate", rightCreator("expression"));
+		BNFRule.addFirst("ForInit", rightCreator("++", "--", "!", "~", "+", "-", "(", "this", "super", "new", "<", "boolean", "byte", "char", "double", "float", "int", "long", "short", "void"), new Identifier(), new Literal());
+		BNFRule.addFirst("ForUpdate", rightCreator("++", "--", "!", "~", "+", "-", "(", "this", "super", "new", "<", "boolean", "byte", "char", "double", "float", "int", "long", "short", "void"), new Identifier(), new Literal());
 		BNFRule.addFirst("TryStatementRest", rightCreator("{"));
 		BNFRule.addFirst("TryStatementRest", rightCreator("("));
 		BNFRule.addFirst("TryStatementBlockRest", rightCreator("catch"));
@@ -585,7 +586,7 @@ public class JavaEngine {
 		BNFRule.addFirst("AssignmentOperator", rightCreator("<<="));
 		BNFRule.addFirst("AssignmentOperator", rightCreator(">>="));
 		BNFRule.addFirst("AssignmentOperator", rightCreator(">>>="));
-		BNFRule.addFirst("ExpressionA", rightCreator("++", "--", "!", "~", "+", "-", "("), new Literal());
+		BNFRule.addFirst("ExpressionA", rightCreator("++", "--", "!", "~", "+", "-", "(", "this", "super", "new", "<", "boolean", "byte", "char", "double", "float", "int", "long", "short", "void"), new Identifier(), new Literal());
 		BNFRule.addFirst("ExpressionARest", rightCreator("?"));
 		BNFRule.addFirst("ExpressionB", rightCreator("++", "--", "!", "~", "+", "-", "(", "this", "super", "new", "<", "boolean", "byte", "char", "double", "float", "int", "long", "short", "void"), new Identifier(), new Literal());
 		BNFRule.addFirst("ExpressionBRest", rightCreator("||", "&&", "|", "^", "&", "==", "!=", "<", ">", "<=", ">=", "<<", ">>", ">>>", "+", "-", "*", "/", "%"));
@@ -702,7 +703,8 @@ public class JavaEngine {
 			"default :"));
 		BNFRule.add("SwitchLabelCase", rightCreator("<Expression>",
 			"<Identifier>"));
-		BNFRule.add("ForControl", rightCreator("<ForInit> ; [<Expression>] ; [<ForUpdate>]",
+		BNFRule.add("ForControl", rightCreator("; [<Expression>] ; [<ForUpdate>]",
+			"<ForInit> ; [<Expression>] ; [<ForUpdate>]",
 			"<ForVarControl>"));
 		BNFRule.add("ForVarControl", rightCreator("<VariableModifier> {<VariableModifier>} <Type> <VariableDeclaratorId> <ForVarControlRest>",
 			"<Type> <VariableDeclaratorId> <ForVarControlRest>"));
