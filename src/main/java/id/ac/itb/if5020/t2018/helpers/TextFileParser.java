@@ -100,18 +100,20 @@ public class TextFileParser implements TextFileParserInterface {
 
     private int shiftedSymbol;
 
+    private boolean inCommentTag = false;
+
     private void updateCurrentToken() throws ParseException {
         shiftedSymbol = 0;
         currentTokenIndex = 0;
         currentToken = "";
 
-        for (;currentCol + shiftedSymbol < currentLine.length();) {
+        for (;currentCol < currentLine.length();) {
             // Skip spacing
-            if (shiftedSymbol == 0 && currentLine.charAt(currentCol + shiftedSymbol) <= ' ') {
+            if (currentLine.charAt(currentCol) <= ' ') {
                 currentCol++;
                 continue;
             }
-            if (handleTokenization()) {
+            if (currentCol < currentLine.length() && handleTokenization()) {
                 break;
             }
         }
@@ -126,6 +128,28 @@ public class TextFileParser implements TextFileParserInterface {
      */
     private boolean handleTokenization() throws ParseException {
         // Separate reading possibility
+        // - Start reading multiline or tagged comment
+        if (inCommentTag || currentLine.substring(currentCol).matches("^/\\*.*")) {
+            if (!inCommentTag) {
+                currentCol += 2;
+                inCommentTag = true;
+            }
+            while (currentCol < currentLine.length() && !currentLine.substring(currentCol).matches("^\\*/.*")) {
+                currentCol++;
+            }
+            if (currentCol < currentLine.length() && currentLine.substring(currentCol).matches("^\\*/.*")) {
+                currentCol += 2;
+                inCommentTag = false;
+            } else {
+                return false;
+            }
+        }
+        // - Start reading single line comment
+        if (currentLine.substring(currentCol).matches("^//.*")) {
+            // skip until end of line
+            currentCol = currentLine.length();
+            return false;
+        }
         // - Start reading string value
         if (currentLine.substring(currentCol).matches("^\".*")) {
             shiftedSymbol = 1;
@@ -142,8 +166,6 @@ public class TextFileParser implements TextFileParserInterface {
             shiftedSymbol++;
             return updateAfterTokenization();
         }
-        // - Start reading multiline or tagged comment
-        // - Start reading single line comment
         // - Start reading terminal with symbol count more than 1
         if (currentLine.substring(currentCol).matches("^=.*")) {
             if (currentLine.substring(currentCol).matches("^={2}[^=].*")) {
