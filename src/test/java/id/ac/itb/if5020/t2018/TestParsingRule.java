@@ -67,8 +67,23 @@ public class TestParsingRule {
 
 		JavaEngine.parser = new TextStringParser("2_147_483_648L");
         parse("Literal");
-
+		
 		JavaEngine.parser = new TextStringParser("0xC0B0L");
+        parse("Literal");
+
+		JavaEngine.parser = new TextStringParser("'a'");
+        parse("Literal");
+		
+		JavaEngine.parser = new TextStringParser("\"test\"");
+        parse("Literal");
+		
+		JavaEngine.parser = new TextStringParser("false");
+        parse("Literal");
+		
+		JavaEngine.parser = new TextStringParser("null");
+        parse("Literal");
+		
+		JavaEngine.parser = new TextStringParser("'\\n'");
         parse("Literal");
 	}
 

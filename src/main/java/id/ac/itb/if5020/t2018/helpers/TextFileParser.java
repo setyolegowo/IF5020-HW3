@@ -418,6 +418,22 @@ public class TextFileParser implements TextFileParserInterface {
 			
             return updateAfterTokenization();
         }
+		
+		// - Start reading character
+		if (currentLine.substring(currentCol).matches("^'.*")) {
+            if (currentLine.charAt(currentCol + 1) == '\\') {
+				shiftedSymbol = 4;
+			} else {
+				shiftedSymbol = 3;
+			}
+			
+			if (currentCol + shiftedSymbol > currentLine.length()) {
+                throw new ParseException("Failed parsing character literal \"" + currentLine + "\". Character has no end?", currentCol);
+            }
+			
+            return updateAfterTokenization();
+        }
+		
         return false;
     }
 
