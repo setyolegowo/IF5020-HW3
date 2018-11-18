@@ -41,6 +41,11 @@ public class RuleTokenizationTest {
         Assert.assertEquals("test tokenize", tokenization.readNextToken(), "\\}");
         Assert.assertEquals("finish", tokenization.hasNext(), false);
 
+        tokenization = new RuleTokenization("[\\[]] <NonTerminal>");
+        Assert.assertEquals("test tokenize", tokenization.readNextToken(), "[\\[]]");
+        Assert.assertEquals("test tokenize", tokenization.readNextToken(), "<NonTerminal>");
+        Assert.assertEquals("finish", tokenization.hasNext(), false);
+
         tokenization = new RuleTokenization("\\[]");
         Assert.assertEquals("test tokenize", tokenization.readNextToken(), "\\[]");
         Assert.assertEquals("finish", tokenization.hasNext(), false);

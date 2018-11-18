@@ -1,8 +1,6 @@
 package id.ac.itb.if5020.t2018;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.StringReader;
 import java.text.ParseException;
 
 import org.junit.Assert;
@@ -12,7 +10,7 @@ import org.junit.Test;
 import id.ac.itb.if5020.t2018.components.BNFRule;
 import id.ac.itb.if5020.t2018.components.RuleNotMatchException;
 import id.ac.itb.if5020.t2018.components.specialrules.Identifier;
-import id.ac.itb.if5020.t2018.helpers.TextFileParser;
+import id.ac.itb.if5020.t2018.helpers.TextStringParser;
 
 import static id.ac.itb.if5020.t2018.JavaEngine.rightCreator;
 
@@ -20,6 +18,7 @@ public class TestParsingRule {
 
     @Before
     public void before() {
+        JavaEngine.throwNonLL1 = true;
         JavaEngine.parser = null;
         BNFRule.clear();
     }
@@ -30,19 +29,19 @@ public class TestParsingRule {
 
         BNFRule.addFirst("Identifier", new Identifier());
 
-        JavaEngine.parser = new TextFileParser(new BufferedReader(new StringReader("t")));
+        JavaEngine.parser = new TextStringParser("t");
         parse("Identifier");
 
-        JavaEngine.parser = new TextFileParser(new BufferedReader(new StringReader("_t")));
+        JavaEngine.parser = new TextStringParser("_t");
         parse("Identifier");
 
-        JavaEngine.parser = new TextFileParser(new BufferedReader(new StringReader("t_")));
+        JavaEngine.parser = new TextStringParser("t_");
         parse("Identifier");
 
-        JavaEngine.parser = new TextFileParser(new BufferedReader(new StringReader("_t_")));
+        JavaEngine.parser = new TextStringParser("_t_");
         parse("Identifier");
 
-        JavaEngine.parser = new TextFileParser(new BufferedReader(new StringReader("t0123")));
+        JavaEngine.parser = new TextStringParser("t0123");
         parse("Identifier");
     }
 
@@ -56,13 +55,13 @@ public class TestParsingRule {
 
         BNFRule.addFirst("Identifier", new Identifier());
 
-        JavaEngine.parser = new TextFileParser(new BufferedReader(new StringReader("import id.ac._it_b.t2015;")));
+        JavaEngine.parser = new TextStringParser("import id.ac._it_b.t2015;");
         parse("ImportDeclaration");
 
-        JavaEngine.parser = new TextFileParser(new BufferedReader(new StringReader("import id.ac._it_b.t2015.*;")));
+        JavaEngine.parser = new TextStringParser("import id.ac._it_b.t2015.*;");
         parse("ImportDeclaration");
 
-        JavaEngine.parser = new TextFileParser(new BufferedReader(new StringReader("import static id.ac._it_b.t2015.*;")));
+        JavaEngine.parser = new TextStringParser("import static id.ac._it_b.t2015.*;");
         parse("ImportDeclaration");
     }
 
@@ -93,7 +92,7 @@ public class TestParsingRule {
 
         BNFRule.addFirst("Identifier", new Identifier());
 
-        JavaEngine.parser = new TextFileParser(new BufferedReader(new StringReader("@s package")));
+        JavaEngine.parser = new TextStringParser("@s package");
         parse("PackageDeclaration");
     }
 
@@ -122,10 +121,10 @@ public class TestParsingRule {
 
         BNFRule.addFirst("Identifier", new Identifier());
 
-        JavaEngine.parser = new TextFileParser(new BufferedReader(new StringReader("@ SuchAnnotation package id.ac._itb.if5020.t2018;")));
+        JavaEngine.parser = new TextStringParser("@ SuchAnnotation package id.ac._itb.if5020.t2018;");
         parse("PackageDeclaration");
 
-        JavaEngine.parser = new TextFileParser(new BufferedReader(new StringReader("@ package id.ac._itb.if5020.t2018;")));
+        JavaEngine.parser = new TextStringParser("@ package id.ac._itb.if5020.t2018;");
         parseErrorExpected("PackageDeclaration", "Terminal 'package' expected");
     }
 
@@ -169,13 +168,61 @@ public class TestParsingRule {
 
         BNFRule.addFirst("Identifier", new Identifier());
 
-        JavaEngine.parser = new TextFileParser(
-                new BufferedReader(new StringReader("package id.ac._itb.if5020.t2018;\nimport java.text.ParseException;")));
+        JavaEngine.parser = new TextStringParser("package id.ac._itb.if5020.t2018;\nimport java.text.ParseException;");
         parse("EarlyAnnotation");
 
-        JavaEngine.parser = new TextFileParser(
-                new BufferedReader(new StringReader("package id.ac._itb.if5020.t2018;\n\nimport java.text.ParseException")));
+        JavaEngine.parser = new TextStringParser("package id.ac._itb.if5020.t2018;\n\nimport java.text.ParseException");
         parseErrorExpected("EarlyAnnotation", "Token is not match with rule ImportDeclarationEnd. Expected '.', ';', ");
+    }
+
+    @Test
+    public void testActualRule() throws IOException, ParseException {
+        JavaEngine.prepareRules();
+        JavaEngine.prepareFirstList();
+
+        JavaEngine.parser = new TextStringParser("package id.ac._itb.if5020.t2018;\nimport java.text.ParseException;\n");
+        parse("Program");
+
+        JavaEngine.parser = new TextStringParser(
+            "@SuchAnnotation package id.ac._itb.if5020.t2018;\n" +
+            "import java.text.ParseException;\n"
+        );
+        parse("Program");
+
+        JavaEngine.parser = new TextStringParser(
+            "@SuchAnnotation package id.ac._it_b.if5020.t2018;\n" +
+            "import java.text.ParseException;\n" +
+            "import static java.text.PARSE;\n" +
+            "import java.text.*;\n" +
+            "import static java.text.*;");
+        parse("Program");
+
+        JavaEngine.parser = new TextStringParser(
+            "@SuchAnnotation public class MyClass {\n" +
+            "}\n"
+        );
+        parse("Program");
+
+        JavaEngine.parser = new TextStringParser("public void MyFunction();");
+        parse("ClassBodyDeclaration");
+
+        JavaEngine.parser = new TextStringParser("protected Identity MyFunction();");
+        parse("ClassBodyDeclaration");
+
+        JavaEngine.parser = new TextStringParser("private Identity MyFunction;");
+        parse("ClassBodyDeclaration");
+
+        JavaEngine.parser = new TextStringParser("private Identity MyFunction {");
+        parseErrorExpected("ClassBodyDeclaration", "Token is not match with rule MethodOrFieldRest. Expected '(', '=', '[]', ';', ");
+
+        JavaEngine.parser = new TextStringParser("protected Identity MyFunction(@Ann byte myvar);");
+        parse("ClassBodyDeclaration");
+
+        JavaEngine.parser = new TextStringParser("void MyFunction();");
+        parse("ClassBodyDeclaration");
+
+        // JavaEngine.parser = new TextStringParser("static final MyFunction();");
+        // parse("ClassBodyDeclaration");
     }
 
     private void parse(String startSymbol) throws IOException, ParseException {

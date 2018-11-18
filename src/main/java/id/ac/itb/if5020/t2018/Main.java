@@ -41,6 +41,7 @@ final public class Main {
             }
         } catch (Exception e) {
             JavaEngine.LOGGER.severe(e.getMessage());
+            e.printStackTrace();
         }
     }
 
