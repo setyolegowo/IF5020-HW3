@@ -668,7 +668,8 @@ public class JavaEngine {
 		BNFRule.addFirst("SelectorA", rightCreator("<"));
 		BNFRule.addFirst("SelectorA", rightCreator("this"));
 		BNFRule.addFirst("SelectorA", rightCreator("super"));
-		BNFRule.addFirst("SelectorA", rightCreator("new"));
+        BNFRule.addFirst("SelectorA", rightCreator("new"));
+        BNFRule.addFirst("SelectorA", new Identifier());
 		BNFRule.addFirst("NonWildcardTypeArguments", rightCreator("<"));
 		BNFRule.addFirst("TypeArgumentsOrDiamond", rightCreator("<>"));
 		BNFRule.addFirst("TypeArgumentsOrDiamond", rightCreator("<"));
@@ -680,9 +681,10 @@ public class JavaEngine {
 			"<Statement>",
 			"<LocalVariableDeclarationStatement>"));
 		BNFRule.add("LocalVariableDeclarationStatement", rightCreator("<VariableModifier> {<VariableModifier>} <Type> <VariableDeclarator> {, <VariableDeclarator>} ;",
-			"<Type> <VariableDeclarator> {, <VariableDeclarator>} ;"));
-		BNFRule.add("VariableInitializer", rightCreator("<ArrayInitializer>",
-			"<Expression>"));
+            "<Type> <VariableDeclarator> {, <VariableDeclarator>} ;"));
+        // Duplicate
+		// BNFRule.add("VariableInitializer", rightCreator("<ArrayInitializer>",
+		// 	"<Expression>"));
 		BNFRule.add("Statement", rightCreator("<Block>",
 			";",
 			"if ( <Expression> ) <Statement> [else <Statement>]",
@@ -784,10 +786,13 @@ public class JavaEngine {
 		BNFRule.add("InnerCreator", rightCreator("<Identifier> [NonWildcardTypeArgumentsOrDiamond] <ClassCreatorRest>"));
 		BNFRule.add("Selector", rightCreator(". <SelectorA>",
 			"\\[ <Expression> \\]"));
-		BNFRule.add("SelectorA", rightCreator("<ExplicitGenericInvocation>",
+        BNFRule.add("SelectorA", rightCreator(
+            "<ExplicitGenericInvocation>",
 			"this",
 			"super <SuperSuffix>",
-			"new [<NonWildcardTypeArguments>] <InnerCreator>"));
+            "new [<NonWildcardTypeArguments>] <InnerCreator>",
+            "<Identifier> [<Arguments>]"
+        ));
 		BNFRule.add("NonWildcardTypeArguments", rightCreator("\\< <TypeList> \\>"));
         BNFRule.add("TypeArgumentsOrDiamond", rightCreator("\\< <TypeArgumentsOrDiamondRest>"));
         BNFRule.add("TypeArgumentsOrDiamondRest", rightCreator("\\>", "<TypeArgumentsWithoutOpening>"));
