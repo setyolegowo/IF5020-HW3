@@ -522,8 +522,8 @@ public class JavaEngine {
 		// Block
 		BNFRule.addFirst("Block", rightCreator("{"));
 		BNFRule.addFirst("BlockStatement", rightCreator("class", "enum"));
-		BNFRule.addFirst("BlockStatement", rightCreator("{", ";", "if", "assert", "switch", "while", "do", "for", "break", "continue", "return", "throw", "synchronized", "try", "++", "--", "!", "~", "+", "-", "(", "this", "super", "new", "<", "boolean", "byte", "char", "double", "float", "int", "long", "short", "void"), new Identifier(), new Literal());
-		BNFRule.addFirst("BlockStatement", rightCreator("boolean", "byte", "char", "double", "float", "int", "long", "short", "final", "@"), new Identifier());
+		// BNFRule.addFirst("BlockStatement", rightCreator("{", ";", "if", "assert", "switch", "while", "do", "for", "break", "continue", "return", "throw", "synchronized", "try", "++", "--", "!", "~", "+", "-", "(", "this", "super", "new", "<", "boolean", "byte", "char", "double", "float", "int", "long", "short", "void"), new Identifier(), new Literal());
+		// BNFRule.addFirst("BlockStatement", rightCreator("boolean", "byte", "char", "double", "float", "int", "long", "short", "final", "@"), new Identifier());
 		BNFRule.addFirst("LocalVariableDeclarationStatement", rightCreator("final", "@"));
 		BNFRule.addFirst("LocalVariableDeclarationStatement", rightCreator("boolean", "byte", "char", "double", "float", "int", "long", "short"), new Identifier());
 		BNFRule.addFirst("VariableInitializer", rightCreator("["));
@@ -671,8 +671,9 @@ public class JavaEngine {
         BNFRule.addFirst("SelectorA", rightCreator("new"));
         BNFRule.addFirst("SelectorA", new Identifier());
 		BNFRule.addFirst("NonWildcardTypeArguments", rightCreator("<"));
-		BNFRule.addFirst("TypeArgumentsOrDiamond", rightCreator("<>"));
 		BNFRule.addFirst("TypeArgumentsOrDiamond", rightCreator("<"));
+        BNFRule.addFirst("TypeArgumentsOrDiamondRest", rightCreator(">"));
+        BNFRule.addFirst("TypeArgumentsOrDiamondRest", new Identifier());
     }
 
 	private static void prepareRuleBlock() throws ParseException {

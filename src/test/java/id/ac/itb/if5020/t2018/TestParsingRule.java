@@ -280,7 +280,7 @@ public class TestParsingRule {
         parse("ClassBodyDeclaration");
 
         JavaEngine.parser = new TextStringParser("private Identity<> MyFunction;");
-        parseErrorExpected("ClassBodyDeclaration", "Token is not Identifier");
+        parseErrorExpected("ClassBodyDeclaration", "Token is not match with rule TypeArgument. Expected '?', <#IDENTIFIER#>, ");
 
         JavaEngine.parser = new TextStringParser("private Identity<AnotherClass> MyFunction;");
         parse("ClassBodyDeclaration");
@@ -419,9 +419,12 @@ public class TestParsingRule {
         parse("BlockStatement");
         JavaEngine.parser = new TextStringParser("myidentity = callMethod().accessField;");
         parse("BlockStatement");
-        JavaEngine.parser = new TextStringParser("HashMap<String, String> myvar = new HashMap<>();");
+        JavaEngine.throwNonLL1 = false;
+        JavaEngine.parser = new TextStringParser("HashMap<String, String> myvar = null;");
         parse("BlockStatement");
-        JavaEngine.parser = new TextStringParser("HashMap<String, List<String>> myvar = new HashMap<>(3);");
+        JavaEngine.parser = new TextStringParser("HashMap<String, String> myvar = new HashMap<String, String>();");
+        parse("BlockStatement");
+        JavaEngine.parser = new TextStringParser("HashMap<String, List<String>> myvar = new HashMap<String, List<String>>(3);");
         parse("BlockStatement");
     }
 
