@@ -13,7 +13,7 @@ public abstract class ClassName {
 
     private String example2 = "AAAA";
 
-    protected String[] example3 = {"AAA", "BBB"};
+    protected String[] example3 = "AAA", "BBB"};
 
     final String example4 = "4", example5;
 
@@ -22,11 +22,16 @@ public abstract class ClassName {
     MyClass example8 = new MyClass();
 
     @P1Annotation
-    protected abstract void myFunction();
+    protected abstract void myFunction(String arg0);
 
     private void myFunctionExtend(final Integer myInt, String... theExtend);
 
-    private void myFunction2() {}
+    private void myFunction2() {
+        int i = 0;
+        callMethod("Example Input : " + i);
+
+        for (; j < 3; j++) {}
+    }
 
     public CLassName() {}
 }

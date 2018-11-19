@@ -30,6 +30,9 @@ public class SpecialRuleOrString {
         if (arg == null) {
             return false;
         }
+        if (arg.length() == 0) {
+            return false;
+        }
         if (_string != null) {
             return _string.equals(arg);
         }

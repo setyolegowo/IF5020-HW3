@@ -53,7 +53,7 @@ public class BNFRule {
 
             Marker marker = JavaEngine.parser.getMarker();
             for (BNFSingleRule rule : rules) {
-                if (firstlist != null && i < firstlist.size()) {
+                if (firstlist != null && i < firstlist.size() && firstlist.get(i).size() > 0) {
                     boolean rsb = false;
                     for(SpecialRuleOrString rs : firstlist.get(i)) {
                         if (rs.match(marker.token)) {

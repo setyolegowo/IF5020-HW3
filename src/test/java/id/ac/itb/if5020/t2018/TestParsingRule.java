@@ -370,6 +370,7 @@ public class TestParsingRule {
         parse("ClassBodyDeclaration");
         JavaEngine.parser = new TextStringParser("MyClass example13 = myfield.yourfield;");
         parse("ClassBodyDeclaration");
+        JavaEngine.throwNonLL1 = false;
         JavaEngine.parser = new TextStringParser("example14 = new MyClass();");
         parse("BlockStatement");
         JavaEngine.parser = new TextStringParser("example15 = myMethod();");
@@ -395,9 +396,10 @@ public class TestParsingRule {
         JavaEngine.prepareRules();
         JavaEngine.prepareFirstList();
 
+        JavaEngine.throwNonLL1 = false;
         JavaEngine.parser = new TextStringParser("for(;;) {}");
         parse("BlockStatement");
-        JavaEngine.parser = new TextStringParser("for(i = 2; i < 2; i++) {}");
+        JavaEngine.parser = new TextStringParser("for (i = 2; i < 2; i++) {}");
         parse("BlockStatement");
         JavaEngine.parser = new TextStringParser("for(; i < 2;) {}");
         parse("BlockStatement");
@@ -419,7 +421,6 @@ public class TestParsingRule {
         parse("BlockStatement");
         JavaEngine.parser = new TextStringParser("myidentity = callMethod().accessField;");
         parse("BlockStatement");
-        JavaEngine.throwNonLL1 = false;
         JavaEngine.parser = new TextStringParser("HashMap<String, String> myvar = null;");
         parse("BlockStatement");
         JavaEngine.parser = new TextStringParser("HashMap<String, String> myvar = new HashMap<String, String>();");

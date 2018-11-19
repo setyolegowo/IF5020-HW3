@@ -521,9 +521,9 @@ public class JavaEngine {
 
 		// Block
 		BNFRule.addFirst("Block", rightCreator("{"));
-		BNFRule.addFirst("BlockStatement", rightCreator("class", "enum"));
-		// BNFRule.addFirst("BlockStatement", rightCreator("{", ";", "if", "assert", "switch", "while", "do", "for", "break", "continue", "return", "throw", "synchronized", "try", "++", "--", "!", "~", "+", "-", "(", "this", "super", "new", "<", "boolean", "byte", "char", "double", "float", "int", "long", "short", "void"), new Identifier(), new Literal());
-		// BNFRule.addFirst("BlockStatement", rightCreator("boolean", "byte", "char", "double", "float", "int", "long", "short", "final", "@"), new Identifier());
+        BNFRule.addFirst("BlockStatement", rightCreator("class", "enum"));
+        BNFRule.addFirst("BlockStatement", rightCreator());
+		BNFRule.addFirst("BlockStatement", rightCreator("{", ";", "if", "assert", "switch", "while", "do", "for", "break", "continue", "return", "throw", "synchronized", "try", "++", "--", "!", "~", "+", "-", "(", "this", "super", "new", "<", "boolean", "byte", "char", "double", "float", "int", "long", "short", "void"), new Identifier(), new Literal());
 		BNFRule.addFirst("LocalVariableDeclarationStatement", rightCreator("final", "@"));
 		BNFRule.addFirst("LocalVariableDeclarationStatement", rightCreator("boolean", "byte", "char", "double", "float", "int", "long", "short"), new Identifier());
 		BNFRule.addFirst("VariableInitializer", rightCreator("["));
@@ -678,9 +678,9 @@ public class JavaEngine {
 
 	private static void prepareRuleBlock() throws ParseException {
 		BNFRule.add("Block", rightCreator("\\{ {<BlockStatement>} \\}"));
-		BNFRule.add("BlockStatement", rightCreator("<ClassOrInterfaceDeclaration>",
-			"<Statement>",
-			"<LocalVariableDeclarationStatement>"));
+        BNFRule.add("BlockStatement", rightCreator("<ClassOrInterfaceDeclaration>",
+            "<LocalVariableDeclarationStatement>",
+			"<Statement>"));
 		BNFRule.add("LocalVariableDeclarationStatement", rightCreator("<VariableModifier> {<VariableModifier>} <Type> <VariableDeclarator> {, <VariableDeclarator>} ;",
             "<Type> <VariableDeclarator> {, <VariableDeclarator>} ;"));
         // Duplicate
