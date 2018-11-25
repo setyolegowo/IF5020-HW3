@@ -13,7 +13,7 @@ public abstract class ClassName {
 
     private String example2 = "AAAA";
 
-    protected String[] example3 = "AAA", "BBB"};
+    protected String[] example3 = {"AAA", "BBB"};
 
     final String example4 = "4", example5;
 
@@ -30,7 +30,9 @@ public abstract class ClassName {
         int i = 0;
         callMethod("Example Input : " + i);
 
-        for (; j < 3; j++) {}
+        for (; j < 3; j++) {
+			i = (double)i + (i * 3);
+		}
     }
 
     public CLassName() {}

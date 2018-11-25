@@ -611,10 +611,11 @@ public class JavaEngine {
 		BNFRule.addFirst("InfixOp", rightCreator("/"));
 		BNFRule.addFirst("InfixOp", rightCreator("%"));
 		BNFRule.addFirst("ExpressionC", rightCreator("++", "--", "!", "~", "+", "-"));
-		BNFRule.addFirst("ExpressionC", rightCreator("("));
+        BNFRule.addFirst("ExpressionC", rightCreator("("));
 		BNFRule.addFirst("ExpressionC", rightCreator("this", "super", "new", "<", "boolean", "byte", "char", "double", "float", "int", "long", "short", "void"), new Identifier(), new Literal());
-		BNFRule.addFirst("ExpressionCRest", rightCreator("boolean", "byte", "char", "double", "float", "int", "long", "short"), new Identifier());
-		BNFRule.addFirst("ExpressionCRest", rightCreator("++", "--", "!", "~", "+", "-", "("), new Literal());
+        BNFRule.addFirst("ExpressionCRest", rightCreator("byte", "short", "char", "int", "long", "float", "double", "boolean"));
+		BNFRule.addFirst("ExpressionCRest", rightCreator("++", "--", "!", "~", "+", "-", "(", "this", "super", "new", "<", "boolean", "byte", "char", "double", "float", "int", "long", "short", "void"), new Identifier(), new Literal());
+		BNFRule.addFirst("ExpressionCRestA", rightCreator("++", "--", "!", "~", "+", "-", "(", "this", "super", "new", "<", "boolean", "byte", "char", "double", "float", "int", "long", "short", "void"), new Identifier(), new Literal());
 		BNFRule.addFirst("PrefixOp", rightCreator("++"));
 		BNFRule.addFirst("PrefixOp", rightCreator("--"));
 		BNFRule.addFirst("PrefixOp", rightCreator("!"));
@@ -741,9 +742,13 @@ public class JavaEngine {
 			"instanceof <Type>"));
 		BNFRule.add("InfixOp", rightCreator("||", "&&", "|", "^", "&", "==", "!=", "\\<", "\\>", "\\<=", "\\>=", "\\<<", "\\>>", "\\>>>", "+", "-", "*", "/", "%"));
 		BNFRule.add("ExpressionC", rightCreator("<PrefixOp> <ExpressionC>",
-			"( <ExpressionCRest> ) <ExpressionC>",
-			"<Primary> {<Selector>} {<PostfixOp>}"));
-		BNFRule.add("ExpressionCRest", rightCreator("<Type> ) <ExpressionC>", "<Expression> )"));
+                "( <ExpressionCRest>",
+                "<Primary> {<Selector>} {<PostfixOp>}"));
+        BNFRule.add("ExpressionCRest", rightCreator("<Type> ) <ExpressionC>",
+				"<Expression> ) [<ExpressionCRestA>]"));
+		BNFRule.add("ExpressionCRestA", rightCreator("<ExpressionC>",
+			"<Selector> {<Selector>} {<PostfixOp>}",
+			"<PostfixOp> {<PostfixOp>}"));
 		BNFRule.add("PrefixOp", rightCreator("++", "--", "!", "~", "+", "-"));
 		BNFRule.add("PostfixOp", rightCreator("++", "--"));
 		BNFRule.add("Primary", rightCreator("this [<Arguments>]",
