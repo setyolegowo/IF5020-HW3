@@ -361,13 +361,13 @@ public class TextFileParser implements TextFileParserInterface {
         if (currentLine.substring(currentCol).matches("^[0-9].*")) {
             shiftedSymbol = 0;
 
-			// Decimal Integer Zero Without Suffix
-			if (currentLine.substring(currentCol).matches("^0[^0-9xXbBlL].*")) {
+            // Decimal Integer Zero Without Suffix
+			if (currentLine.substring(currentCol).matches("^0([^0-9xXbBlL]|\\b).*")) {
 				shiftedSymbol = 1;
             }
 
 			// Decimal Integer Zero With Suffix
-			if (currentLine.substring(currentCol).matches("^0[lL][^0-9xXbB].*")) {
+			if (currentLine.substring(currentCol).matches("^0[lL]([^0-9xXbB]|\\b).*")) {
 				shiftedSymbol = 2;
             }
 
