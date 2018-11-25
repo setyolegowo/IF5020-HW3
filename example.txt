@@ -30,7 +30,7 @@ public abstract class ClassName {
         int i = 0;
         callMethod("Example Input : " + i);
 
-        for (; j < 3; j++) {
+        for (j = 0; j < 3; j++) {
 			i = (double)i + (i * 3);
 		}
     }

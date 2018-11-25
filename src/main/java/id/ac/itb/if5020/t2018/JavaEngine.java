@@ -372,7 +372,7 @@ public class JavaEngine {
         BNFRule.addFirst("MemberDeclaration", rightCreator("<"));
         BNFRule.addFirst("MemberDeclaration", new Identifier());
 
-        BNFRule.addFirst("VoidMethodDeclarationRest", rightCreator("("));
+        BNFRule.addFirst("VoidMethodDeclaratorRest", rightCreator("("));
         BNFRule.addFirst("MemberDeclarationRestAfterBasic", new Identifier());
         BNFRule.addFirst("MethodDeclaratorRest", rightCreator("("));
         BNFRule.addFirst("MethodOrFieldRest", rightCreator("("));
@@ -520,7 +520,9 @@ public class JavaEngine {
         BNFRule.addFirst("Identifier", new Identifier());
 
 		// Block
-		BNFRule.addFirst("Block", rightCreator("{"));
+        BNFRule.addFirst("Block", rightCreator("{"));
+        BNFRule.addFirst("BlockOrSemicolon", rightCreator(";"));
+        BNFRule.addFirst("BlockOrSemicolon", rightCreator("{"));
         BNFRule.addFirst("BlockStatement", rightCreator("class", "enum"));
         BNFRule.addFirst("BlockStatement", rightCreator());
 		BNFRule.addFirst("BlockStatement", rightCreator("{", ";", "if", "assert", "switch", "while", "do", "for", "break", "continue", "return", "throw", "synchronized", "try", "++", "--", "!", "~", "+", "-", "(", "this", "super", "new", "<", "boolean", "byte", "char", "double", "float", "int", "long", "short", "void"), new Identifier(), new Literal());

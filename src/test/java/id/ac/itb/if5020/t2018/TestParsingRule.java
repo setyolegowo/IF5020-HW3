@@ -401,6 +401,8 @@ public class TestParsingRule {
         parse("BlockStatement");
         JavaEngine.parser = new TextStringParser("for (i = 2; i < 2; i++) {}");
         parse("BlockStatement");
+        JavaEngine.parser = new TextStringParser("for (i = 0; i < 2; i++) {}");
+        parse("BlockStatement");
         JavaEngine.parser = new TextStringParser("for(; i < 2;) {}");
         parse("BlockStatement");
         JavaEngine.parser = new TextStringParser("while(true) {}");
