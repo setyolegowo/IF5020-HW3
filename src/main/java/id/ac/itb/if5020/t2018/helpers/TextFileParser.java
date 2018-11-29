@@ -419,7 +419,7 @@ public class TextFileParser implements TextFileParserInterface {
 			if (currentLine.substring(currentCol).matches("^[0-9_]+\\.[0-9_]*([eE][+-]?[0-9_]+)?[fFdD]?.*")
 				|| currentLine.substring(currentCol).matches("^[0-9_]+[eE][+-]?[0-9_]+[fFdD]?.*")
 				|| currentLine.substring(currentCol).matches("^[0-9_]+[fFdD].*")) {
-				while (currentLine.substring(currentCol, currentCol + shiftedSymbol + 1).matches("^[0-9_\\.eE+-fFdD]+")) {
+				while (currentLine.substring(currentCol, currentCol + shiftedSymbol + 1).matches("^[0-9_\\.eE+\\-fFdD]+")) {
 					shiftedSymbol++;
 					if (currentCol + shiftedSymbol >= currentLine.length()) {
 						break;
@@ -430,7 +430,7 @@ public class TextFileParser implements TextFileParserInterface {
 			// Hex Floating
 			if (currentLine.substring(currentCol).matches("^0[xX][0-9A-Fa-f_]+[\\.]?[pP][+-]?[0-9_]+[fFdD]?.*")
 				|| currentLine.substring(currentCol).matches("^0[xX][0-9A-Fa-f_]*\\.[0-9A-Fa-f_]+[pP][+-]?[0-9_]+[fFdD]?.*")) {
-				while (currentLine.substring(currentCol, currentCol + shiftedSymbol + 1).matches("^[0-9A-Fa-f_\\.pP+-dDxX]+")) {
+				while (currentLine.substring(currentCol, currentCol + shiftedSymbol + 1).matches("^[0-9A-Fa-f_\\.pP+\\-dDxX]+")) {
 					shiftedSymbol++;
 					if (currentCol + shiftedSymbol >= currentLine.length()) {
 						break;

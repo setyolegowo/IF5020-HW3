@@ -85,6 +85,9 @@ public class TestParsingRule {
 
 		JavaEngine.parser = new TextStringParser("'\\n'");
         parse("Literal");
+
+        JavaEngine.parser = new TextStringParser("10e-3");
+        parse("Literal");
 	}
 
     @Test
@@ -418,6 +421,8 @@ public class TestParsingRule {
         JavaEngine.parser = new TextStringParser("try { mymethod(); } catch (Exception e) {}");
         parse("BlockStatement");
         JavaEngine.parser = new TextStringParser("callMethod();");
+        parse("BlockStatement");
+        JavaEngine.parser = new TextStringParser("i=1e-3;");
         parse("BlockStatement");
         JavaEngine.parser = new TextStringParser("callMethod().callAnotherMethod();");
         parse("BlockStatement");
